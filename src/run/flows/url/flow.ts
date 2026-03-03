@@ -1,4 +1,4 @@
-import * as urlUtils from "@steipete/summarize-core/content/url";
+import * as urlUtils from "@creativerezz/summarize-core/content/url";
 import type { UrlFlowContext } from "./types.js";
 import { buildExtractCacheKey, buildSlidesCacheKey } from "../../../cache.js";
 import { loadRemoteAsset } from "../../../content/asset.js";

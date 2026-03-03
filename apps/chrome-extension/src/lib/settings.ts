@@ -1,3 +1,4 @@
+import { PATTERN_IDS } from "./patterns";
 import {
   type ColorMode,
   type ColorScheme,
@@ -29,6 +30,7 @@ export type Settings = {
   length: string;
   language: string;
   promptOverride: string;
+  pattern: string;
   maxChars: number;
   requestMode: string;
   firecrawlMode: string;
@@ -93,6 +95,14 @@ function normalizeLanguage(value: unknown): string {
 function normalizePromptOverride(value: unknown): string {
   if (typeof value !== "string") return defaultSettings.promptOverride;
   return value;
+}
+
+function normalizePattern(value: unknown): string {
+  if (typeof value !== "string") return defaultSettings.pattern;
+  const trimmed = value.trim();
+  if (!trimmed) return defaultSettings.pattern;
+  if (PATTERN_IDS.includes(trimmed)) return trimmed;
+  return defaultSettings.pattern;
 }
 
 function normalizeHoverPrompt(value: unknown): string {
@@ -240,6 +250,7 @@ export const defaultSettings: Settings = {
   length: "xl",
   language: "auto",
   promptOverride: "",
+  pattern: "",
   maxChars: 120_000,
   requestMode: "",
   firecrawlMode: "",
@@ -287,6 +298,7 @@ export async function loadSettings(): Promise<Settings> {
     length: normalizeLength(raw.length),
     language: normalizeLanguage(raw.language),
     promptOverride: normalizePromptOverride(raw.promptOverride),
+    pattern: normalizePattern(raw.pattern),
     autoSummarize:
       typeof raw.autoSummarize === "boolean" ? raw.autoSummarize : defaultSettings.autoSummarize,
     hoverSummaries:
@@ -352,6 +364,7 @@ export async function saveSettings(settings: Settings): Promise<void> {
       length: normalizeLength(settings.length),
       language: normalizeLanguage(settings.language),
       promptOverride: normalizePromptOverride(settings.promptOverride),
+      pattern: normalizePattern(settings.pattern),
       hoverPrompt: normalizeHoverPrompt(settings.hoverPrompt),
       autoCliOrder: normalizeAutoCliOrder(settings.autoCliOrder),
       requestMode: normalizeRequestMode(settings.requestMode),

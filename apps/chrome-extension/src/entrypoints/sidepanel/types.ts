@@ -20,6 +20,7 @@ export type UiState = {
     lineHeight: number;
     model: string;
     length: string;
+    pattern: string;
     tokenPresent: boolean;
   };
   status: string;

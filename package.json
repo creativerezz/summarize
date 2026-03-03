@@ -1,5 +1,5 @@
 {
-  "name": "@steipete/summarize",
+  "name": "@creativerezz/summarize",
   "version": "0.11.2",
   "description": "Link → clean text → summary.",
   "bin": {
@@ -55,8 +55,8 @@
     "typecheck": "tsc -p tsconfig.build.json --noEmit"
   },
   "dependencies": {
+    "@creativerezz/summarize-core": "workspace:*",
     "@mariozechner/pi-ai": "^0.52.12",
-    "@steipete/summarize-core": "workspace:*",
     "commander": "^14.0.3",
     "file-type": "^21.3.0",
     "gpt-tokenizer": "^3.4.0",

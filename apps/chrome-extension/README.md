@@ -62,7 +62,7 @@ Step-by-step:
 The extension talks to a tiny local daemon that runs on your machine. This process is identical for both Chrome and Firefox.
 
 1. Install `summarize` (choose one):
-   - `npm i -g @steipete/summarize` (requires Node.js 22+)
+   - `npm i -g @creativerezz/summarize` (requires Node.js 22+)
    - `brew install steipete/tap/summarize` (macOS arm64)
 2. Open the Side Panel (Chrome) or Sidebar (Firefox). You'll see a **Setup** screen with a token and an install command.
 3. Open Terminal:

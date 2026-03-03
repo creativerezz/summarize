@@ -2,7 +2,7 @@ import type {
   ProcessHandle,
   ProcessObserver,
   ProcessRegistration,
-} from "@steipete/summarize-core/processes";
+} from "@creativerezz/summarize-core/processes";
 import { randomUUID } from "node:crypto";
 
 type ProcessStatus = "running" | "exited" | "error";

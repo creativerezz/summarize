@@ -1,10 +1,11 @@
-import type { SummaryLength } from "@steipete/summarize-core";
-import { SUMMARY_LENGTH_SPECS } from "@steipete/summarize-core/prompts";
+import type { SummaryLength } from "@creativerezz/summarize-core";
+import { SUMMARY_LENGTH_SPECS } from "@creativerezz/summarize-core/prompts";
 import { render } from "preact";
 import { createPortal } from "preact/compat";
 import { useEffect, useMemo, useRef, useState } from "preact/hooks";
 import type { ColorMode, ColorScheme } from "../../lib/theme";
 import { readPresetOrCustomValue, resolvePresetOrCustom } from "../../lib/combo";
+import { type PatternDef, PATTERNS, QUICK_PATTERNS } from "../../lib/patterns";
 import { defaultSettings } from "../../lib/settings";
 import { getOverlayRoot } from "../../ui/portal";
 import { SchemeChips } from "../../ui/scheme-chips";
@@ -27,6 +28,11 @@ type SidepanelPickerProps = SidepanelPickerState & SidepanelPickerHandlers;
 type SidepanelLengthPickerProps = {
   length: string;
   onLengthChange: (value: string) => void;
+};
+
+type SidepanelPatternPickerProps = {
+  pattern: string;
+  onPatternChange: (value: string) => void;
 };
 
 type SummarizeControlProps = {
@@ -473,6 +479,145 @@ function SidepanelPickers(props: SidepanelPickerProps) {
       />
     </>
   );
+}
+
+type PatternPickerProps = {
+  pattern: string;
+  onPatternChange: (value: string) => void;
+};
+
+function PatternField({ pattern, onPatternChange }: PatternPickerProps) {
+  const items = [
+    { value: "", label: "Default" },
+    ...PATTERNS.map((p) => ({ value: p.id, label: p.label })),
+  ];
+  return (
+    <label className="pattern mini">
+      <span className="pickerTitle">Pattern</span>
+      <div className="combo">
+        <select
+          className="patternSelect"
+          value={pattern}
+          onChange={(e) => onPatternChange(e.currentTarget.value)}
+          title="Choose a summarization or extraction pattern"
+        >
+          {items.map((item) => (
+            <option key={item.value || "default"} value={item.value}>
+              {item.label}
+            </option>
+          ))}
+        </select>
+      </div>
+    </label>
+  );
+}
+
+type HeaderPatternPickerProps = {
+  pattern: string;
+  onPatternChange: (value: string) => void;
+};
+
+function HeaderPatternField({ pattern, onPatternChange }: HeaderPatternPickerProps) {
+  const items = [
+    { value: "", label: "Pattern" },
+    ...PATTERNS.map((p) => ({ value: p.id, label: p.label })),
+  ];
+  return (
+    <select
+      className="headerPatternSelect"
+      value={pattern}
+      onChange={(e) => onPatternChange(e.currentTarget.value)}
+      title="Choose a summarization pattern"
+    >
+      {items.map((item) => (
+        <option key={item.value || "default"} value={item.value}>
+          {item.label}
+        </option>
+      ))}
+    </select>
+  );
+}
+
+export function mountHeaderPatternPicker(
+  root: HTMLElement,
+  props: HeaderPatternPickerProps,
+): { update: (next: HeaderPatternPickerProps) => void } {
+  let current = props;
+  const renderPicker = () => {
+    render(<HeaderPatternField {...current} />, root);
+  };
+  renderPicker();
+  return {
+    update(next: HeaderPatternPickerProps) {
+      current = next;
+      renderPicker();
+    },
+  };
+}
+
+export function mountSidepanelPatternPicker(
+  root: HTMLElement,
+  props: PatternPickerProps,
+): { update: (next: PatternPickerProps) => void } {
+  let current = props;
+  const renderPicker = () => {
+    render(<PatternField {...current} />, root);
+  };
+  renderPicker();
+  return {
+    update(next: PatternPickerProps) {
+      current = next;
+      renderPicker();
+    },
+  };
+}
+
+type QuickPatternChipsProps = {
+  onSelect: (patternId: string) => void;
+  currentPattern?: string;
+  busy?: boolean;
+};
+
+function QuickPatternChips({ onSelect, currentPattern, busy }: QuickPatternChipsProps) {
+  const patternsById = new Map<string, PatternDef>(PATTERNS.map((p) => [p.id, p]));
+  return (
+    <div className="quickPatternChips" role="group" aria-label="Quick actions">
+      {QUICK_PATTERNS.map(({ id, label }) => {
+        const active = currentPattern === id;
+        return (
+          <button
+            key={id}
+            type="button"
+            className={`ghost quickPatternChip${active ? " active" : ""}`}
+            disabled={busy}
+            data-busy={busy ? "true" : "false"}
+            aria-pressed={active}
+            onClick={() => onSelect(id)}
+            title={patternsById.get(id)?.description ?? label}
+          >
+            {label}
+          </button>
+        );
+      })}
+    </div>
+  );
+}
+
+export function mountQuickPatternChips(
+  root: HTMLElement,
+  props: QuickPatternChipsProps,
+): { update: (next: QuickPatternChipsProps) => void } {
+  let current = props;
+  const renderChips = () => {
+    render(<QuickPatternChips {...current} />, root);
+  };
+  renderChips();
+  return {
+    update(next: QuickPatternChipsProps) {
+      current = next;
+      renderChips();
+    },
+  };
 }
 
 export function mountSidepanelPickers(root: HTMLElement, props: SidepanelPickerProps) {

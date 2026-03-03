@@ -1,6 +1,6 @@
 import type { BrowserContext, Page, Worker } from "@playwright/test";
+import { SUMMARY_LENGTH_SPECS } from "@creativerezz/summarize-core/prompts";
 import { chromium, expect, firefox, test } from "@playwright/test";
-import { SUMMARY_LENGTH_SPECS } from "@steipete/summarize-core/prompts";
 import { spawnSync } from "node:child_process";
 import fs from "node:fs";
 import { createServer as createHttpServer } from "node:http";

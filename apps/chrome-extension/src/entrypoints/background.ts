@@ -1,5 +1,5 @@
 import type { AssistantMessage, Message } from "@mariozechner/pi-ai";
-import { shouldPreferUrlMode } from "@steipete/summarize-core/content/url";
+import { shouldPreferUrlMode } from "@creativerezz/summarize-core/content/url";
 import { defineBackground } from "wxt/utils/define-background";
 import { parseSseEvent, type SseSlidesData } from "../../../../src/shared/sse-events.js";
 import {
@@ -38,6 +38,7 @@ type PanelToBg =
   | { type: "panel:rememberUrl"; url: string }
   | { type: "panel:setAuto"; value: boolean }
   | { type: "panel:setLength"; value: string }
+  | { type: "panel:setPattern"; value: string }
   | { type: "panel:slides-context"; requestId: string; url?: string }
   | { type: "panel:cache"; cache: PanelCachePayload }
   | { type: "panel:get-cache"; requestId: string; tabId: number; url: string }
@@ -1029,6 +1030,7 @@ export default defineBackground(() => {
         lineHeight: settings.lineHeight,
         model: settings.model,
         length: settings.length,
+        pattern: settings.pattern ?? "",
         tokenPresent: Boolean(settings.token.trim()),
       },
       status,
@@ -2036,6 +2038,16 @@ export default defineBackground(() => {
           await patchSettings({ length: next });
           void emitState(session, "");
           void summarizeActiveTab(session, "length-change");
+        })();
+        break;
+      case "panel:setPattern":
+        void (async () => {
+          const next = (raw as { value: string }).value;
+          const current = await loadSettings();
+          if ((current.pattern ?? "") === next) return;
+          await patchSettings({ pattern: next });
+          void emitState(session, "");
+          void summarizeActiveTab(session, "pattern-change");
         })();
         break;
       case "panel:slides-context":

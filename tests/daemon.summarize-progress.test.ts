@@ -1,4 +1,4 @@
-import { type LinkPreviewProgressEvent, ProgressKind } from "@steipete/summarize-core/content";
+import { type LinkPreviewProgressEvent, ProgressKind } from "@creativerezz/summarize-core/content";
 import { describe, expect, it } from "vitest";
 import { formatProgress } from "../src/daemon/summarize-progress.js";
 

@@ -1,5 +1,6 @@
 import type { ToolCall, ToolResultMessage } from "@mariozechner/pi-ai";
 import { parseSseEvent } from "../../../../src/shared/sse-events.js";
+import { resolveEffectivePrompt } from "../lib/daemon-payload";
 import { loadSettings } from "../lib/settings";
 import { parseSseStream } from "../lib/sse";
 import {
@@ -120,7 +121,7 @@ async function executeSummarizeTool(args: SummarizeToolArgs): Promise<SummarizeT
   const language = args.language ?? settings.language;
   if (language) body.language = language;
 
-  const prompt = args.prompt ?? settings.promptOverride;
+  const prompt = args.prompt ?? resolveEffectivePrompt(settings);
   if (prompt) body.prompt = prompt;
 
   const timeout = args.timeout ?? settings.timeout;

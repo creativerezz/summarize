@@ -239,11 +239,20 @@
               </div>
             </label>
             <label>
+              <span>Pattern</span>
+              <select id="patternSelect">
+                <option value="">Default</option>
+              </select>
+              <span class="subtitle"
+                >Summarization or extraction pattern. Default uses standard summary.</span
+              >
+            </label>
+            <label>
               <span>Prompt override</span>
               <textarea
                 id="promptOverride"
                 rows="6"
-                placeholder="Custom instructions (prefix). Context + content still appended."
+                placeholder="Custom instructions (overrides pattern when set)."
               ></textarea>
             </label>
             <label>

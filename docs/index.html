@@ -1,229 +1,980 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" class="scroll-smooth">
   <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width,initial-scale=1" />
-    <meta name="color-scheme" content="dark light" />
-    <title>summarize — CLI + Chrome Side Panel for fast summaries</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Summarize — Fast Summaries from Any Link</title>
     <meta
       name="description"
-      content="Summarize is a fast CLI and a Chrome Side Panel extension for clean extraction and sharp summaries."
+      content="Turn URLs, files, and media into sharp summaries. CLI + Chrome Side Panel with streaming Markdown, multi-provider LLM support, and a real extraction pipeline."
     />
     <link rel="canonical" href="https://summarize.sh/" />
-    <meta property="og:title" content="summarize" />
+    <meta property="og:title" content="Summarize" />
     <meta
       property="og:description"
-      content="Fast summaries, in the CLI and the Chrome Side Panel."
+      content="Fast summaries from any link. CLI + Chrome Side Panel."
     />
     <meta property="og:type" content="website" />
     <meta property="og:url" content="https://summarize.sh/" />
     <meta name="theme-color" content="#0b0f12" />
-
+    <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Fraunces:wght@600;700&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="./assets/site.css" />
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              lime: { 400: "#b8ff5a", 500: "#a8ef4a", 600: "#8fd33a" },
+              brand: { orange: "#ff9b35", teal: "#36c9b9" },
+            },
+          },
+        },
+      };
+    </script>
+    <style>
+      body {
+        font-family: "Inter", sans-serif;
+        background-color: #0b0f12;
+        color: #f7f2e7;
+        overflow-x: hidden;
+      }
+      .glow-bg {
+        position: absolute;
+        width: 900px;
+        height: 900px;
+        background: radial-gradient(
+          circle,
+          rgba(184, 255, 90, 0.12) 0%,
+          rgba(255, 155, 53, 0.06) 30%,
+          rgba(0, 0, 0, 0) 60%
+        );
+        top: -250px;
+        left: 50%;
+        transform: translateX(-50%);
+        z-index: -1;
+        pointer-events: none;
+      }
+      .glass-card {
+        background: rgba(16, 22, 30, 0.7);
+        border: 1px solid rgba(247, 242, 231, 0.08);
+        backdrop-filter: blur(12px);
+      }
+      .code-block {
+        background: rgba(0, 0, 0, 0.4);
+        border: 1px solid rgba(247, 242, 231, 0.1);
+      }
+      .code-block code {
+        font-family: "JetBrains Mono", "SF Mono", "Fira Code", ui-monospace, monospace;
+      }
+      pre,
+      code {
+        font-family: "JetBrains Mono", "SF Mono", "Fira Code", ui-monospace, monospace;
+      }
+      ::selection {
+        background: rgba(184, 255, 90, 0.3);
+        color: white;
+      }
+      .pipeline-arrow {
+        background: linear-gradient(
+          90deg,
+          rgba(184, 255, 90, 0.6),
+          rgba(255, 155, 53, 0.6),
+          rgba(54, 201, 185, 0.6)
+        );
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+      }
+    </style>
   </head>
-  <body>
-    <main class="shell">
-      <header class="top">
-        <a class="brand" href="./index.html" aria-label="summarize home">
-          <span class="brand__mark" aria-hidden="true">s</span>
-          <span class="brand__word">summarize</span>
-        </a>
-        <nav class="nav" aria-label="Primary">
-          <a data-nav="home" href="./index.html">Home</a>
-          <a data-nav="docs" href="./docs/index.html">Docs</a>
-          <a href="https://github.com/steipete/summarize">GitHub</a>
-        </nav>
-      </header>
+  <body class="antialiased relative">
+    <!-- Ambient Background Glow -->
+    <div class="glow-bg"></div>
 
-      <section class="hero">
-        <div class="hero__frame reveal">
-          <div class="hero__copy">
-            <p class="kicker">CLI + Chrome Extension</p>
-            <h1 class="title">Summaries that live where you work.</h1>
-            <p class="lede">
-              Summarize turns links, files, and media into sharp summaries with a real extraction
-              pipeline. Use the <strong>CLI</strong> for automation or the
-              <strong>Chrome Side Panel</strong> for one-click summaries of the current tab.
-              Supports <strong>local, paid, and free</strong> models.
-            </p>
-            <div class="ctaRow">
-              <a class="btn btn--primary" href="./docs/index.html">Docs</a>
-              <a class="btn" href="https://github.com/steipete/summarize">GitHub</a>
+    <!-- Navigation -->
+    <nav class="fixed w-full top-0 z-50 glass-card border-b border-white/5">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex items-center justify-between h-16">
+          <a href="./" class="flex-shrink-0 flex items-center gap-2.5">
+            <div
+              class="w-8 h-8 rounded-lg flex items-center justify-center text-sm font-bold"
+              style="
+                background:
+                  radial-gradient(circle at 30% 30%, rgba(184, 255, 90, 0.9), transparent 60%),
+                  radial-gradient(circle at 70% 20%, rgba(255, 155, 53, 0.7), transparent 60%),
+                  radial-gradient(circle at 20% 80%, rgba(54, 201, 185, 0.65), transparent 60%),
+                  rgba(255, 255, 255, 0.08);
+                border: 1px solid rgba(247, 242, 231, 0.12);
+              "
+            >
+              s
             </div>
-            <div class="quickRow">
-              <div class="quickRow__label">Quickstart</div>
-              <div class="quickRow__code">
-                <code id="install">npm i -g @steipete/summarize</code>
-                <code id="run">summarize "https://example.com/article"</code>
-              </div>
-              <div class="quickRow__actions">
-                <button class="btn" data-copy="#install">Copy install</button>
-                <button class="btn" data-copy="#run">Copy run</button>
-              </div>
+            <span class="font-semibold text-lg tracking-tight">summarize</span>
+          </a>
+          <div class="hidden md:block">
+            <div class="ml-10 flex items-baseline space-x-8">
+              <a
+                href="#features"
+                class="text-zinc-400 hover:text-white px-3 py-2 text-sm font-medium transition-colors"
+                >Features</a
+              >
+              <a
+                href="#how-it-works"
+                class="text-zinc-400 hover:text-white px-3 py-2 text-sm font-medium transition-colors"
+                >How it works</a
+              >
+              <a
+                href="#install"
+                class="text-zinc-400 hover:text-white px-3 py-2 text-sm font-medium transition-colors"
+                >Install</a
+              >
+              <a
+                href="https://github.com/steipete/summarize"
+                class="text-zinc-400 hover:text-white px-3 py-2 text-sm font-medium transition-colors"
+                >GitHub</a
+              >
             </div>
           </div>
-
-          <div class="hero__visual">
-            <figure class="shot shot--cli">
-              <img src="./assets/summarize-cli.png" alt="Summarize CLI output" loading="lazy" />
-              <figcaption>CLI: streaming summaries in the terminal.</figcaption>
-            </figure>
-            <figure class="shot shot--ext">
-              <img
-                src="./assets/summarize-extension.png"
-                alt="Summarize Chrome extension side panel"
-                loading="lazy"
-              />
-              <figcaption>Extension: a live Side Panel for the active tab.</figcaption>
-            </figure>
-          </div>
-        </div>
-      </section>
-
-      <section class="productGrid" aria-label="Products">
-        <article class="productCard reveal" id="cli">
-          <div class="productCard__head">
-            <span class="badge">CLI</span>
-            <h2>Fast summaries, scripted or interactive.</h2>
-          </div>
-          <p>
-            Built for automation: extract clean text, summarize with your model, and output JSON or
-            Markdown. Works with URLs, PDFs, images, audio/video, YouTube, and podcasts.
-          </p>
-          <ul class="list">
-            <li><strong>Extract + summarize</strong> with Firecrawl fallback.</li>
-            <li>
-              <strong>Media pipeline</strong> with transcript-first flow and Whisper fallback.
-            </li>
-            <li>
-              <strong>Scriptable output</strong> via <code>--json</code>, <code>--extract</code>,
-              <code>--metrics</code>.
-            </li>
-          </ul>
-          <div class="cardCode">
-            <pre><code>summarize "https://example.com" --length long
-summarize "https://youtu.be/..." --youtube auto
-summarize "/path/report.pdf" --model google/gemini-3-flash-preview</code></pre>
-          </div>
-          <div class="ctaRow">
-            <a class="btn btn--ghost" href="./docs/cli.html">CLI docs</a>
-            <a class="btn" href="./docs/config.html">Config</a>
-          </div>
-        </article>
-
-        <article class="productCard reveal" id="extension">
-          <div class="productCard__head">
-            <span class="badge badge--alt">Chrome Extension</span>
-            <h2>Summaries in the Side Panel, one click away.</h2>
-          </div>
-          <p>
-            A real Chrome Side Panel with a tiny local daemon. It streams Markdown summaries for the
-            active tab, with auto-summary on navigation.
-          </p>
-          <ol class="steps">
-            <li>Install the CLI + daemon.</li>
-            <li>Load the unpacked extension.</li>
-            <li>Open Side Panel and connect with the token.</li>
-          </ol>
-          <div class="callout">
-            <strong>Runs locally</strong> on your machine. The daemon is localhost-only and
-            token-protected.
-          </div>
-          <div class="ctaRow">
-            <a class="btn btn--ghost" href="./docs/chrome-extension.html">Extension docs</a>
+          <div class="flex items-center gap-4">
             <a
-              class="btn"
+              href="./docs/index.html"
+              class="text-sm font-medium text-zinc-400 hover:text-white hidden sm:block transition-colors"
+              >Docs</a
+            >
+            <a
               href="https://chromewebstore.google.com/detail/summarize/cejgnmmhbbpdmjnfppjdfkocebngehfg"
-              >Chrome Web Store</a
-            >
-            <a class="btn" href="https://github.com/steipete/summarize/releases/latest"
-              >Latest release</a
+              class="bg-lime-400 hover:bg-lime-500 text-black px-5 py-2 rounded-full text-sm font-semibold transition-colors"
+              >Get extension</a
             >
           </div>
-        </article>
-      </section>
+        </div>
+      </div>
+    </nav>
 
-      <section class="capGrid" aria-label="Capabilities">
-        <div class="capCard reveal">
-          <span class="capCard__eyebrow">Extraction</span>
-          <h3>HTML -> clean text -> summary</h3>
-          <p>Readability, markitdown, and Firecrawl fallback when sites fight back.</p>
-        </div>
-        <div class="capCard reveal">
-          <span class="capCard__eyebrow">Media</span>
-          <h3>Podcast + YouTube aware</h3>
-          <p>Prefers published transcripts, then Whisper when needed.</p>
-        </div>
-        <div class="capCard reveal">
-          <span class="capCard__eyebrow">Models</span>
-          <h3>Provider-agnostic</h3>
-          <p>Local OpenAI-compatible gateways, paid providers, and OpenRouter free models.</p>
-        </div>
-        <div class="capCard reveal">
-          <span class="capCard__eyebrow">Outputs</span>
-          <h3>Readable + scriptable</h3>
-          <p>Streaming TTY output, ANSI Markdown, JSON diagnostics, and metrics.</p>
-        </div>
-      </section>
-
-      <section class="flow">
-        <div class="flow__card reveal">
-          <h2>How it works</h2>
-          <div class="flow__steps">
-            <div class="flowStep">
-              <span class="flowStep__num">01</span>
-              <div>
-                <h4>Fetch + extract</h4>
-                <p>Pull the source, clean HTML, normalize, or convert to Markdown.</p>
-              </div>
-            </div>
-            <div class="flowStep">
-              <span class="flowStep__num">02</span>
-              <div>
-                <h4>Transcript when needed</h4>
-                <p>Use published transcripts, then Whisper fallback for media.</p>
-              </div>
-            </div>
-            <div class="flowStep">
-              <span class="flowStep__num">03</span>
-              <div>
-                <h4>Summarize + format</h4>
-                <p>LLM output, streaming in the CLI or Side Panel, with metrics.</p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section class="more">
-        <div class="more__card reveal">
-          <h2>More</h2>
-          <div class="more__grid">
-            <a class="moreLink" href="./docs/website.html">Website extraction</a>
-            <a class="moreLink" href="./docs/youtube.html">YouTube transcripts</a>
-            <a class="moreLink" href="./docs/media.html">Media pipeline</a>
-            <a class="moreLink" href="./docs/model-auto.html">Auto model rules</a>
-            <a class="moreLink" href="./docs/llm.html">Model + key setup</a>
-            <a class="moreLink" href="./docs/config.html">Config schema</a>
-          </div>
-        </div>
-      </section>
-
-      <footer class="footer">
-        <span>Canonical: <a href="https://summarize.sh">summarize.sh</a></span>
-        <span
-          ><a href="./docs/index.html">Docs</a> ·
-          <a href="https://github.com/steipete/summarize">GitHub</a></span
+    <!-- Hero Section -->
+    <main class="pt-32 pb-16 px-4 sm:px-6 lg:px-8 text-center max-w-5xl mx-auto mt-10">
+      <div
+        class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/5 border border-white/10 text-xs font-medium mb-8 text-zinc-300"
+      >
+        <span class="flex h-2 w-2 relative">
+          <span
+            class="animate-ping absolute inline-flex h-full w-full rounded-full bg-lime-400 opacity-75"
+          ></span>
+          <span class="relative inline-flex rounded-full h-2 w-2 bg-lime-400"></span>
+        </span>
+        v0.11 &mdash; Chat agent, YouTube slides, media-aware summaries
+      </div>
+      <h1 class="text-5xl md:text-7xl font-bold tracking-tight mb-6 leading-tight">
+        Fast summaries from <br /><span class="pipeline-arrow">any link</span>
+      </h1>
+      <p class="text-xl text-zinc-400 mb-10 max-w-2xl mx-auto">
+        URLs, files, YouTube, podcasts, PDFs, audio, and video &mdash; extracted, cleaned, and
+        summarized with your choice of LLM. In the terminal or a Chrome Side Panel.
+      </p>
+      <div class="flex flex-col sm:flex-row justify-center gap-4 mb-16">
+        <a
+          href="#install"
+          class="bg-lime-400 hover:bg-lime-500 text-black px-8 py-4 rounded-full text-lg font-semibold transition-all shadow-[0_0_30px_rgba(184,255,90,0.2)] hover:shadow-[0_0_40px_rgba(184,255,90,0.35)]"
         >
-      </footer>
+          Get started
+        </a>
+        <a
+          href="https://github.com/steipete/summarize"
+          class="border border-white/10 hover:border-white/20 text-white px-8 py-4 rounded-full text-lg font-semibold transition-all hover:bg-white/5"
+        >
+          View on GitHub
+        </a>
+      </div>
+
+      <!-- Hero Mockup: CLI -->
+      <div
+        class="relative mx-auto w-full max-w-4xl bg-zinc-900 rounded-2xl overflow-hidden border border-white/10 shadow-2xl ring-1 ring-white/5"
+      >
+        <div class="bg-gradient-to-br from-zinc-800 to-black p-1">
+          <div
+            class="w-full rounded-xl bg-zinc-950 border border-white/5 relative overflow-hidden flex flex-col"
+          >
+            <!-- Terminal Header -->
+            <div class="h-10 border-b border-white/5 flex items-center px-4 bg-zinc-900/50">
+              <div class="flex gap-2">
+                <div class="w-3 h-3 rounded-full bg-red-500/80"></div>
+                <div class="w-3 h-3 rounded-full bg-yellow-500/80"></div>
+                <div class="w-3 h-3 rounded-full bg-green-500/80"></div>
+              </div>
+              <span class="ml-4 text-xs text-zinc-500 font-mono">Terminal</span>
+            </div>
+            <!-- Terminal Body -->
+            <div class="flex-1 p-5 text-left overflow-hidden">
+              <div class="font-mono text-sm leading-relaxed space-y-3">
+                <div>
+                  <span class="text-lime-400">$</span>
+                  <span class="text-zinc-300"
+                    >summarize "https://example.com/long-article" --length long</span
+                  >
+                </div>
+                <div class="text-zinc-500 text-xs">
+                  &bull; Fetching... &bull; Extracting (readability)... &bull; Summarizing with
+                  openai/gpt-5-mini...
+                </div>
+                <div
+                  class="text-zinc-300 leading-relaxed text-xs mt-2 border-l-2 border-lime-400/30 pl-3"
+                >
+                  <p class="mb-2">
+                    <strong class="text-white"
+                      >The article explores the rapid advancement of AI-powered developer
+                      tools</strong
+                    >, highlighting how modern code assistants have evolved beyond simple
+                    autocomplete into full agentic workflows.
+                  </p>
+                  <p class="mb-2">
+                    Key findings include a 40% productivity improvement in teams using integrated AI
+                    assistants, with the greatest gains in code review and documentation tasks...
+                  </p>
+                  <p class="text-zinc-500">[streaming...]</p>
+                </div>
+                <div class="text-zinc-600 text-xs pt-1 border-t border-white/5">
+                  <span class="text-brand-teal">1,247 tokens</span> &middot;
+                  <span class="text-brand-orange">0.8s</span> &middot;
+                  <span class="text-zinc-500">$0.002</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </main>
 
-    <script type="module" src="./assets/site.js"></script>
+    <!-- Install Methods -->
+    <section id="install" class="border-y border-white/5 py-16">
+      <div class="max-w-4xl mx-auto px-4 text-center">
+        <p class="text-xs text-zinc-500 font-semibold tracking-[0.2em] uppercase mb-8">
+          Install in seconds
+        </p>
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          <div class="glass-card rounded-xl p-5 group hover:bg-white/[0.03] transition-colors">
+            <div class="text-xs text-zinc-500 uppercase tracking-wider mb-3 font-medium">npm</div>
+            <code class="text-sm text-lime-400 block">npm i -g @steipete/summarize</code>
+          </div>
+          <div class="glass-card rounded-xl p-5 group hover:bg-white/[0.03] transition-colors">
+            <div class="text-xs text-zinc-500 uppercase tracking-wider mb-3 font-medium">
+              Homebrew
+            </div>
+            <code class="text-sm text-lime-400 block">brew install steipete/tap/summarize</code>
+          </div>
+          <div class="glass-card rounded-xl p-5 group hover:bg-white/[0.03] transition-colors">
+            <div class="text-xs text-zinc-500 uppercase tracking-wider mb-3 font-medium">
+              npx (no install)
+            </div>
+            <code class="text-sm text-lime-400 block">npx -y @steipete/summarize "URL"</code>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Two Products -->
+    <section class="py-24 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+      <h2 class="text-3xl md:text-4xl font-bold mb-4">Two ways to summarize</h2>
+      <p class="text-zinc-400 mb-12 max-w-xl mx-auto">
+        A powerful CLI for automation and scripting, plus a Chrome Side Panel for one-click browser
+        summaries.
+      </p>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <!-- CLI Card -->
+        <div class="glass-card rounded-2xl p-2 relative group overflow-hidden text-left">
+          <div class="p-6 pb-4">
+            <span
+              class="inline-flex items-center gap-2 px-2.5 py-1 rounded-full text-[11px] font-semibold tracking-wider uppercase border border-lime-400/40 bg-lime-400/10 text-lime-400 mb-4"
+              >CLI</span
+            >
+            <h3 class="text-2xl font-bold mb-2">Terminal power</h3>
+            <p class="text-zinc-400 text-sm leading-relaxed mb-4">
+              Built for automation: extract clean text, summarize with any model, output JSON or
+              Markdown. Works with URLs, PDFs, images, audio/video, YouTube, and podcasts.
+            </p>
+          </div>
+          <div class="mx-2 mb-2 rounded-xl overflow-hidden border border-white/5">
+            <img
+              src="./assets/summarize-cli.png"
+              alt="Summarize CLI output"
+              loading="lazy"
+              class="w-full h-auto"
+            />
+          </div>
+        </div>
+        <!-- Extension Card -->
+        <div class="glass-card rounded-2xl p-2 relative group overflow-hidden text-left">
+          <div class="p-6 pb-4">
+            <span
+              class="inline-flex items-center gap-2 px-2.5 py-1 rounded-full text-[11px] font-semibold tracking-wider uppercase border border-brand-orange/50 bg-brand-orange/10 text-brand-orange mb-4"
+              >Chrome Extension</span
+            >
+            <h3 class="text-2xl font-bold mb-2">Side Panel summaries</h3>
+            <p class="text-zinc-400 text-sm leading-relaxed mb-4">
+              One-click summaries of the active tab with streaming Markdown. Chat agent,
+              auto-summary on navigation, YouTube slide extraction, all inside a Side Panel.
+            </p>
+          </div>
+          <div class="mx-2 mb-2 rounded-xl overflow-hidden border border-white/5">
+            <img
+              src="./assets/summarize-extension.png"
+              alt="Summarize Chrome extension"
+              loading="lazy"
+              class="w-full h-auto"
+            />
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Feature 1: Content Extraction -->
+    <section id="features" class="py-24 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-16 items-center">
+        <div
+          class="order-2 md:order-1 relative w-full aspect-[4/3] rounded-2xl bg-gradient-to-tr from-lime-400/10 to-brand-teal/10 border border-white/10 p-6 flex flex-col justify-center"
+        >
+          <div class="font-mono text-sm space-y-4">
+            <div class="code-block rounded-lg p-4">
+              <div class="text-zinc-500 text-xs mb-2"># Web pages</div>
+              <code class="text-lime-400">summarize "https://example.com/article"</code>
+            </div>
+            <div class="code-block rounded-lg p-4">
+              <div class="text-zinc-500 text-xs mb-2"># YouTube videos</div>
+              <code class="text-lime-400">summarize "https://youtu.be/dQw4w9..."</code>
+            </div>
+            <div class="code-block rounded-lg p-4">
+              <div class="text-zinc-500 text-xs mb-2"># PDFs, images, audio, video</div>
+              <code class="text-lime-400">summarize "/path/to/report.pdf"</code>
+            </div>
+            <div class="code-block rounded-lg p-4">
+              <div class="text-zinc-500 text-xs mb-2"># Podcasts</div>
+              <code class="text-lime-400">summarize "https://podcasts.apple.com/..."</code>
+            </div>
+          </div>
+        </div>
+        <div class="order-1 md:order-2">
+          <h2 class="text-3xl md:text-4xl font-bold mb-6">Summarize anything with a URL</h2>
+          <p class="text-zinc-400 text-lg mb-8 leading-relaxed">
+            Web pages, YouTube, podcasts, PDFs, images, audio, video &mdash; pass any URL or file
+            path and get a clean summary.
+          </p>
+          <ul class="space-y-4">
+            <li class="flex items-start gap-3 text-zinc-300">
+              <div
+                class="mt-1 w-5 h-5 rounded-full bg-lime-400/20 text-lime-400 flex items-center justify-center shrink-0"
+              >
+                <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="3"
+                    d="M5 13l4 4L19 7"
+                  />
+                </svg>
+              </div>
+              Smart extraction: Readability, markitdown, and Firecrawl fallback
+            </li>
+            <li class="flex items-start gap-3 text-zinc-300">
+              <div
+                class="mt-1 w-5 h-5 rounded-full bg-lime-400/20 text-lime-400 flex items-center justify-center shrink-0"
+              >
+                <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="3"
+                    d="M5 13l4 4L19 7"
+                  />
+                </svg>
+              </div>
+              Transcript-first media: published captions, then Whisper fallback
+            </li>
+            <li class="flex items-start gap-3 text-zinc-300">
+              <div
+                class="mt-1 w-5 h-5 rounded-full bg-lime-400/20 text-lime-400 flex items-center justify-center shrink-0"
+              >
+                <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="3"
+                    d="M5 13l4 4L19 7"
+                  />
+                </svg>
+              </div>
+              Pipe from stdin: <code class="text-lime-400/80 text-sm">pbpaste | summarize -</code>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- Feature 2: Provider-Agnostic Models -->
+    <section class="py-24 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-16 items-center">
+        <div>
+          <h2 class="text-3xl md:text-4xl font-bold mb-6">Any model, any provider</h2>
+          <p class="text-zinc-400 text-lg mb-8 leading-relaxed">
+            Use gateway-style IDs to pick any model. Auto mode intelligently selects and falls back
+            between providers.
+          </p>
+          <ul class="space-y-4">
+            <li class="flex items-start gap-3 text-zinc-300">
+              <div
+                class="mt-1 w-5 h-5 rounded-full bg-brand-orange/20 text-brand-orange flex items-center justify-center shrink-0"
+              >
+                <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="3"
+                    d="M5 13l4 4L19 7"
+                  />
+                </svg>
+              </div>
+              OpenAI, Anthropic, Google, xAI, NVIDIA, Z.AI, OpenRouter
+            </li>
+            <li class="flex items-start gap-3 text-zinc-300">
+              <div
+                class="mt-1 w-5 h-5 rounded-full bg-brand-orange/20 text-brand-orange flex items-center justify-center shrink-0"
+              >
+                <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="3"
+                    d="M5 13l4 4L19 7"
+                  />
+                </svg>
+              </div>
+              CLI backends: Claude Code, Codex, Gemini CLI, Cursor Agent
+            </li>
+            <li class="flex items-start gap-3 text-zinc-300">
+              <div
+                class="mt-1 w-5 h-5 rounded-full bg-brand-orange/20 text-brand-orange flex items-center justify-center shrink-0"
+              >
+                <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="3"
+                    d="M5 13l4 4L19 7"
+                  />
+                </svg>
+              </div>
+              Free preset via OpenRouter
+              <code class="text-brand-orange/80 text-sm">--model free</code>
+            </li>
+          </ul>
+        </div>
+        <div
+          class="relative w-full rounded-2xl bg-gradient-to-tr from-brand-orange/10 to-lime-400/10 border border-white/10 p-6"
+        >
+          <div class="font-mono text-sm space-y-3">
+            <div class="code-block rounded-lg p-3">
+              <code
+                ><span class="text-zinc-500">--model</span> <span class="text-lime-400">auto</span>
+                <span class="text-zinc-600"># intelligent selection + fallback</span></code
+              >
+            </div>
+            <div class="code-block rounded-lg p-3">
+              <code
+                ><span class="text-zinc-500">--model</span>
+                <span class="text-lime-400">openai/gpt-5-mini</span></code
+              >
+            </div>
+            <div class="code-block rounded-lg p-3">
+              <code
+                ><span class="text-zinc-500">--model</span>
+                <span class="text-lime-400">anthropic/claude-sonnet-4-5</span></code
+              >
+            </div>
+            <div class="code-block rounded-lg p-3">
+              <code
+                ><span class="text-zinc-500">--model</span>
+                <span class="text-lime-400">google/gemini-3-flash-preview</span></code
+              >
+            </div>
+            <div class="code-block rounded-lg p-3">
+              <code
+                ><span class="text-zinc-500">--model</span>
+                <span class="text-lime-400">xai/grok-4-fast-non-reasoning</span></code
+              >
+            </div>
+            <div class="code-block rounded-lg p-3">
+              <code
+                ><span class="text-zinc-500">--model</span> <span class="text-lime-400">free</span>
+                <span class="text-zinc-600"># OpenRouter free models</span></code
+              >
+            </div>
+            <div class="code-block rounded-lg p-3">
+              <code
+                ><span class="text-zinc-500">--cli</span> <span class="text-lime-400">claude</span>
+                <span class="text-zinc-600"># use Claude Code as backend</span></code
+              >
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 4-Grid: Capabilities -->
+    <section class="py-24 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 border-t border-white/5">
+      <div class="mb-16 text-center">
+        <h2 class="text-3xl md:text-4xl font-bold mb-4">Built for real extraction</h2>
+        <p class="text-zinc-400 text-lg">
+          Not a wrapper around an API. A full pipeline for clean, reliable summaries.
+        </p>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+        <div
+          class="glass-card rounded-2xl p-6 flex flex-col gap-5 hover:bg-white/[0.03] transition-colors"
+        >
+          <div
+            class="w-12 h-12 rounded-lg bg-lime-400/15 text-lime-400 flex items-center justify-center"
+          >
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+              />
+            </svg>
+          </div>
+          <div>
+            <h3 class="text-xl font-bold mb-2">Smart extraction</h3>
+            <p class="text-zinc-400 text-sm">
+              Readability for articles, markitdown for complex pages, Firecrawl fallback when sites
+              fight back. HTML, Markdown, and plain text output.
+            </p>
+          </div>
+          <div class="mt-auto code-block rounded-lg p-4 font-mono text-xs">
+            <span class="text-lime-400">$</span>
+            <span class="text-zinc-300">summarize "https://..." --extract --format md</span>
+          </div>
+        </div>
+
+        <div
+          class="glass-card rounded-2xl p-6 flex flex-col gap-5 hover:bg-white/[0.03] transition-colors"
+        >
+          <div
+            class="w-12 h-12 rounded-lg bg-brand-orange/15 text-brand-orange flex items-center justify-center"
+          >
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"
+              />
+            </svg>
+          </div>
+          <div>
+            <h3 class="text-xl font-bold mb-2">YouTube + Podcasts</h3>
+            <p class="text-zinc-400 text-sm">
+              Prefers published transcripts, falls back to Whisper. Supports Apple Podcasts,
+              Spotify, RSS feeds, and YouTube with slide extraction and OCR.
+            </p>
+          </div>
+          <div class="mt-auto code-block rounded-lg p-4 font-mono text-xs">
+            <span class="text-lime-400">$</span>
+            <span class="text-zinc-300"
+              >summarize "https://youtu.be/..." --slides --slides-ocr</span
+            >
+          </div>
+        </div>
+
+        <div
+          class="glass-card rounded-2xl p-6 flex flex-col gap-5 hover:bg-white/[0.03] transition-colors"
+        >
+          <div
+            class="w-12 h-12 rounded-lg bg-brand-teal/15 text-brand-teal flex items-center justify-center"
+          >
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M13 10V3L4 14h7v7l9-11h-7z"
+              />
+            </svg>
+          </div>
+          <div>
+            <h3 class="text-xl font-bold mb-2">Streaming output</h3>
+            <p class="text-zinc-400 text-sm">
+              Real-time Markdown rendering in the terminal with ANSI formatting, progress
+              indicators, token counts, timing, and cost estimates.
+            </p>
+          </div>
+          <div class="mt-auto code-block rounded-lg p-4 font-mono text-xs">
+            <span class="text-lime-400">$</span>
+            <span class="text-zinc-300"
+              >summarize "https://..." --stream on --metrics detailed</span
+            >
+          </div>
+        </div>
+
+        <div
+          class="glass-card rounded-2xl p-6 flex flex-col gap-5 hover:bg-white/[0.03] transition-colors"
+        >
+          <div
+            class="w-12 h-12 rounded-lg bg-violet-500/15 text-violet-400 flex items-center justify-center"
+          >
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+              />
+            </svg>
+          </div>
+          <div>
+            <h3 class="text-xl font-bold mb-2">Scriptable JSON output</h3>
+            <p class="text-zinc-400 text-sm">
+              Machine-readable output with diagnostics, prompt metadata, metrics, and optional
+              summary. Pipe into jq, build automations, or integrate with other tools.
+            </p>
+          </div>
+          <div class="mt-auto code-block rounded-lg p-4 font-mono text-xs">
+            <span class="text-lime-400">$</span>
+            <span class="text-zinc-300">summarize "https://..." --json | jq '.summary'</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- How It Works -->
+    <section id="how-it-works" class="py-12 px-4 sm:px-6 lg:px-8">
+      <div class="max-w-7xl mx-auto">
+        <div
+          class="w-full rounded-3xl p-8 md:p-12 relative overflow-hidden"
+          style="
+            background: linear-gradient(
+              135deg,
+              rgba(184, 255, 90, 0.15),
+              rgba(255, 155, 53, 0.12),
+              rgba(54, 201, 185, 0.12)
+            );
+          "
+        >
+          <div
+            class="absolute inset-0 border border-white/10 rounded-3xl pointer-events-none"
+          ></div>
+          <div class="relative z-10 text-center mb-10">
+            <h2 class="text-3xl md:text-4xl font-bold mb-4">How it works</h2>
+            <p class="text-zinc-400 text-lg">Three steps. One command.</p>
+          </div>
+          <div class="relative z-10 grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div class="glass-card rounded-xl p-6 text-center">
+              <div
+                class="w-10 h-10 rounded-full bg-lime-400/20 text-lime-400 flex items-center justify-center mx-auto mb-4 font-mono font-bold text-lg"
+              >
+                1
+              </div>
+              <h3 class="font-bold text-lg mb-2">Fetch + Extract</h3>
+              <p class="text-zinc-400 text-sm">
+                Pull the source, clean HTML, normalize content, or download media for transcription.
+              </p>
+            </div>
+            <div class="glass-card rounded-xl p-6 text-center">
+              <div
+                class="w-10 h-10 rounded-full bg-brand-orange/20 text-brand-orange flex items-center justify-center mx-auto mb-4 font-mono font-bold text-lg"
+              >
+                2
+              </div>
+              <h3 class="font-bold text-lg mb-2">Transcript if needed</h3>
+              <p class="text-zinc-400 text-sm">
+                For media inputs, use published transcripts first. Fall back to local Whisper or
+                cloud transcription.
+              </p>
+            </div>
+            <div class="glass-card rounded-xl p-6 text-center">
+              <div
+                class="w-10 h-10 rounded-full bg-brand-teal/20 text-brand-teal flex items-center justify-center mx-auto mb-4 font-mono font-bold text-lg"
+              >
+                3
+              </div>
+              <h3 class="font-bold text-lg mb-2">Summarize + Stream</h3>
+              <p class="text-zinc-400 text-sm">
+                Send to your chosen LLM. Stream output in the terminal or Side Panel with metrics
+                and cost tracking.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- YouTube Slides Section -->
+    <section class="py-24 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 border-t border-white/5">
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-16 items-center">
+        <div>
+          <span
+            class="inline-flex items-center gap-2 px-2.5 py-1 rounded-full text-[11px] font-semibold tracking-wider uppercase border border-brand-teal/40 bg-brand-teal/10 text-brand-teal mb-4"
+            >New in v0.11</span
+          >
+          <h2 class="text-3xl md:text-4xl font-bold mb-6">YouTube slide extraction</h2>
+          <p class="text-zinc-400 text-lg mb-8 leading-relaxed">
+            Automatically extract slide screenshots from video presentations with scene detection,
+            optional OCR, and timestamped seek links.
+          </p>
+          <ul class="space-y-4">
+            <li class="flex items-start gap-3 text-zinc-300">
+              <div
+                class="mt-1 w-5 h-5 rounded-full bg-brand-teal/20 text-brand-teal flex items-center justify-center shrink-0"
+              >
+                <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="3"
+                    d="M5 13l4 4L19 7"
+                  />
+                </svg>
+              </div>
+              Scene detection via ffmpeg with configurable thresholds
+            </li>
+            <li class="flex items-start gap-3 text-zinc-300">
+              <div
+                class="mt-1 w-5 h-5 rounded-full bg-brand-teal/20 text-brand-teal flex items-center justify-center shrink-0"
+              >
+                <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="3"
+                    d="M5 13l4 4L19 7"
+                  />
+                </svg>
+              </div>
+              Optional OCR with tesseract for text-heavy slides
+            </li>
+            <li class="flex items-start gap-3 text-zinc-300">
+              <div
+                class="mt-1 w-5 h-5 rounded-full bg-brand-teal/20 text-brand-teal flex items-center justify-center shrink-0"
+              >
+                <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="3"
+                    d="M5 13l4 4L19 7"
+                  />
+                </svg>
+              </div>
+              Inline thumbnails in supported terminals (kitty, iTerm, Konsole)
+            </li>
+          </ul>
+        </div>
+        <div class="relative w-full rounded-2xl overflow-hidden border border-white/10 shadow-2xl">
+          <img
+            src="./assets/youtube-slides.png"
+            alt="YouTube slide extraction"
+            loading="lazy"
+            class="w-full h-auto"
+          />
+        </div>
+      </div>
+    </section>
+
+    <!-- Extension Setup -->
+    <section class="py-24 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 border-t border-white/5">
+      <div class="text-center mb-16">
+        <h2 class="text-3xl md:text-4xl font-bold mb-4">Chrome extension setup</h2>
+        <p class="text-zinc-400 text-lg">Three steps to streaming summaries in the browser.</p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div
+          class="glass-card rounded-2xl p-6 flex flex-col items-center text-center border border-white/10"
+        >
+          <div
+            class="w-14 h-14 rounded-full bg-lime-400/15 text-lime-400 flex items-center justify-center mb-6 text-2xl font-bold font-mono"
+          >
+            1
+          </div>
+          <h3 class="font-bold text-lg mb-2">Install the CLI</h3>
+          <p class="text-zinc-400 text-sm mb-4">Via npm or Homebrew. Requires Node 22+.</p>
+          <code class="text-xs text-lime-400 bg-black/30 px-3 py-2 rounded-lg border border-white/5"
+            >npm i -g @steipete/summarize</code
+          >
+        </div>
+
+        <div
+          class="glass-card rounded-2xl p-6 flex flex-col items-center text-center border border-white/10 bg-gradient-to-b from-brand-orange/5 to-transparent"
+        >
+          <div
+            class="w-14 h-14 rounded-full bg-brand-orange/15 text-brand-orange flex items-center justify-center mb-6 text-2xl font-bold font-mono"
+          >
+            2
+          </div>
+          <h3 class="font-bold text-lg mb-2">Get the extension</h3>
+          <p class="text-zinc-400 text-sm mb-4">
+            Install from the Chrome Web Store and open the Side Panel.
+          </p>
+          <a
+            href="https://chromewebstore.google.com/detail/summarize/cejgnmmhbbpdmjnfppjdfkocebngehfg"
+            class="text-xs text-brand-orange hover:underline"
+            >Chrome Web Store &rarr;</a
+          >
+        </div>
+
+        <div
+          class="glass-card rounded-2xl p-6 flex flex-col items-center text-center border border-white/10"
+        >
+          <div
+            class="w-14 h-14 rounded-full bg-brand-teal/15 text-brand-teal flex items-center justify-center mb-6 text-2xl font-bold font-mono"
+          >
+            3
+          </div>
+          <h3 class="font-bold text-lg mb-2">Connect the daemon</h3>
+          <p class="text-zinc-400 text-sm mb-4">
+            Copy the token from the Side Panel and install the background service.
+          </p>
+          <code
+            class="text-xs text-brand-teal bg-black/30 px-3 py-2 rounded-lg border border-white/5"
+            >summarize daemon install --token &lt;TOKEN&gt;</code
+          >
+        </div>
+      </div>
+
+      <div class="mt-8 text-center">
+        <p class="text-zinc-500 text-sm">
+          The daemon runs locally on 127.0.0.1 with token auth. It auto-starts via launchd (macOS),
+          systemd (Linux), or Scheduled Task (Windows).
+        </p>
+      </div>
+    </section>
+
+    <!-- Output Length + Config -->
+    <section class="py-24 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 border-t border-white/5">
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-16 items-start">
+        <div>
+          <h2 class="text-3xl md:text-4xl font-bold mb-6">Configurable output</h2>
+          <p class="text-zinc-400 text-lg mb-8 leading-relaxed">
+            Control summary length, output language, streaming, themes, and more. Smart defaults
+            that stay out of the way.
+          </p>
+
+          <div class="space-y-3">
+            <div class="glass-card rounded-xl p-4 flex items-center gap-4">
+              <code class="text-lime-400 text-sm font-mono shrink-0">--length</code>
+              <span class="text-zinc-400 text-sm"
+                >short, medium, long, xl, xxl, or character count</span
+              >
+            </div>
+            <div class="glass-card rounded-xl p-4 flex items-center gap-4">
+              <code class="text-lime-400 text-sm font-mono shrink-0">--lang</code>
+              <span class="text-zinc-400 text-sm">Output language (auto matches source)</span>
+            </div>
+            <div class="glass-card rounded-xl p-4 flex items-center gap-4">
+              <code class="text-lime-400 text-sm font-mono shrink-0">--theme</code>
+              <span class="text-zinc-400 text-sm">aurora, ember, moss, or mono</span>
+            </div>
+            <div class="glass-card rounded-xl p-4 flex items-center gap-4">
+              <code class="text-lime-400 text-sm font-mono shrink-0">--json</code>
+              <span class="text-zinc-400 text-sm">Machine-readable output with diagnostics</span>
+            </div>
+          </div>
+        </div>
+        <div>
+          <h3 class="text-lg font-bold mb-4 text-zinc-300">Configuration file</h3>
+          <div class="code-block rounded-xl p-5 font-mono text-sm leading-relaxed">
+            <div class="text-zinc-500 mb-2">~/.summarize/config.json</div>
+            <pre class="text-zinc-300"><span class="text-zinc-500">{</span>
+  <span class="text-lime-400">"model"</span>: <span class="text-brand-orange">"openai/gpt-5-mini"</span>,
+  <span class="text-lime-400">"env"</span>: <span class="text-zinc-500">{</span>
+    <span class="text-lime-400">"OPENAI_API_KEY"</span>: <span class="text-brand-orange">"sk-..."</span>
+  <span class="text-zinc-500">}</span>,
+  <span class="text-lime-400">"ui"</span>: <span class="text-zinc-500">{</span>
+    <span class="text-lime-400">"theme"</span>: <span class="text-brand-orange">"ember"</span>
+  <span class="text-zinc-500">}</span>,
+  <span class="text-lime-400">"cache"</span>: <span class="text-zinc-500">{</span>
+    <span class="text-lime-400">"media"</span>: <span class="text-zinc-500">{</span> <span class="text-lime-400">"ttlDays"</span>: <span class="text-brand-teal">7</span> <span class="text-zinc-500">}</span>
+  <span class="text-zinc-500">}</span>
+<span class="text-zinc-500">}</span></pre>
+          </div>
+          <p class="text-zinc-500 text-sm mt-4">
+            Precedence: CLI flags > env vars > config file > defaults.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Footer CTA -->
+    <footer class="pt-24 pb-12 text-center border-t border-white/5 relative overflow-hidden">
+      <div
+        class="absolute bottom-0 left-1/2 -translate-x-1/2 w-full max-w-2xl h-64 bg-lime-400/5 blur-[100px] pointer-events-none"
+      ></div>
+
+      <div class="relative z-10">
+        <div
+          class="w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-8 text-2xl font-bold"
+          style="
+            background:
+              radial-gradient(circle at 30% 30%, rgba(184, 255, 90, 0.9), transparent 60%),
+              radial-gradient(circle at 70% 20%, rgba(255, 155, 53, 0.7), transparent 60%),
+              radial-gradient(circle at 20% 80%, rgba(54, 201, 185, 0.65), transparent 60%),
+              rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(247, 242, 231, 0.12);
+          "
+        >
+          s
+        </div>
+        <h2 class="text-4xl md:text-5xl font-bold mb-6 tracking-tight">Start summarizing</h2>
+        <p class="text-zinc-400 mb-10 text-lg max-w-lg mx-auto">
+          Open source. Runs locally. Works with any LLM provider.
+        </p>
+
+        <div class="flex flex-col sm:flex-row justify-center gap-4 mb-16">
+          <a
+            href="https://chromewebstore.google.com/detail/summarize/cejgnmmhbbpdmjnfppjdfkocebngehfg"
+            class="bg-lime-400 hover:bg-lime-500 text-black px-8 py-4 rounded-full text-lg font-bold transition-colors shadow-xl"
+          >
+            Get the Chrome extension
+          </a>
+          <a
+            href="https://github.com/steipete/summarize"
+            class="border border-white/10 hover:border-white/20 hover:bg-white/5 text-white px-8 py-4 rounded-full text-lg font-bold transition-colors"
+          >
+            View on GitHub
+          </a>
+        </div>
+
+        <!-- Footer Links -->
+        <div
+          class="max-w-5xl mx-auto px-4 border-t border-white/5 pt-8 flex flex-col md:flex-row justify-between items-center text-sm text-zinc-500 gap-4"
+        >
+          <div class="flex gap-6">
+            <a href="./docs/index.html" class="hover:text-white transition-colors">Docs</a>
+            <a
+              href="https://github.com/steipete/summarize"
+              class="hover:text-white transition-colors"
+              >GitHub</a
+            >
+            <a
+              href="https://www.npmjs.com/package/@steipete/summarize"
+              class="hover:text-white transition-colors"
+              >npm</a
+            >
+          </div>
+          <div class="flex items-center gap-2">
+            <span>MIT License</span>
+            <span>&middot;</span>
+            <a href="https://summarize.sh" class="hover:text-white transition-colors"
+              >summarize.sh</a
+            >
+          </div>
+        </div>
+      </div>
+    </footer>
   </body>
 </html>

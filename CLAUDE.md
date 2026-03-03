@@ -4,12 +4,12 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-Summarize is a link-to-summary tool: URL → clean text → LLM summary. It ships as a CLI (`@steipete/summarize`), a shared core library (`@steipete/summarize-core`), and a Chrome/Firefox browser extension.
+Summarize is a link-to-summary tool: URL → clean text → LLM summary. It ships as a CLI (`@steipete/summarize`), a shared core library (`@creativerezz/summarize-core`), and a Chrome/Firefox browser extension.
 
 ## Monorepo Structure
 
 - **Root** (`@steipete/summarize`) — CLI + UX (TTY, spinners, streaming progress). Depends on core.
-- **packages/core** (`@steipete/summarize-core`) — Library surface for programmatic use. No CLI deps. Content extraction (readability, cheerio, jsdom), prompts, transcription, OpenAI helpers.
+- **packages/core** (`@creativerezz/summarize-core`) — Library surface for programmatic use. No CLI deps. Content extraction (readability, cheerio, jsdom), prompts, transcription, OpenAI helpers.
 - **apps/chrome-extension** (`@steipete/summarize-chrome-extension`) — Browser extension built with WXT + Preact. Side panel UI with streaming chat agent.
 
 Versioning is lockstep; publish order: core first, then CLI (`scripts/release.sh`).
@@ -55,6 +55,7 @@ pnpm summarize daemon restart
 ```
 
 After extension changes, always rebuild + restart daemon in order:
+
 1. `pnpm -C apps/chrome-extension build`
 2. `pnpm summarize daemon restart`
 
@@ -66,7 +67,7 @@ After extension changes, always rebuild + restart daemon in order:
 - **Setup:** `tests/setup.ts` disables local Whisper during tests
 - **Timeouts:** 15s for both test and hook
 - **Coverage excludes:** daemon, slides/extract, type barrels, index files
-- **Workspace aliases** in vitest.config.ts map `@steipete/summarize-core/*` to source for dev
+- **Workspace aliases** in vitest.config.ts map `@creativerezz/summarize-core/*` to source for dev
 
 ## Tooling
 
@@ -90,5 +91,5 @@ After extension changes, always rebuild + restart daemon in order:
 ## Conventions
 
 - Commits: Conventional Commits (`type: message`)
-- Import from apps: prefer `@steipete/summarize-core` to avoid pulling CLI-only deps
+- Import from apps: prefer `@creativerezz/summarize-core` to avoid pulling CLI-only deps
 - Multiple agents may work in this folder concurrently (see AGENTS.md)

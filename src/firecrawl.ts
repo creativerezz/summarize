@@ -1,4 +1,7 @@
-import type { FirecrawlScrapeResult, ScrapeWithFirecrawl } from "@steipete/summarize-core/content";
+import type {
+  FirecrawlScrapeResult,
+  ScrapeWithFirecrawl,
+} from "@creativerezz/summarize-core/content";
 
 type FirecrawlResponse = {
   success: boolean;

@@ -1,0 +1,832 @@
+<!doctype html>
+<html lang="en" class="scroll-smooth">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Screen Studio - Beautiful Screen Recordings</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      body {
+        font-family: "Inter", sans-serif;
+        background-color: #000000;
+        color: #ffffff;
+        overflow-x: hidden;
+      }
+      .glow-bg {
+        position: absolute;
+        width: 800px;
+        height: 800px;
+        background: radial-gradient(circle, rgba(109, 40, 217, 0.15) 0%, rgba(0, 0, 0, 0) 60%);
+        top: -200px;
+        left: 50%;
+        transform: translateX(-50%);
+        z-index: -1;
+        pointer-events: none;
+      }
+      .glass-card {
+        background: rgba(20, 20, 20, 0.6);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        backdrop-filter: blur(12px);
+      }
+      .feature-gradient-1 {
+        background: linear-gradient(135deg, #ff7e5f, #feb47b);
+      }
+      .feature-gradient-2 {
+        background: linear-gradient(135deg, #6a11cb, #2575fc);
+      }
+      .feature-gradient-3 {
+        background: linear-gradient(135deg, #f12711, #f5af19);
+      }
+    </style>
+  </head>
+  <body class="antialiased relative selection:bg-violet-500/30 selection:text-white">
+    <!-- Ambient Background Glow -->
+    <div class="glow-bg"></div>
+
+    <!-- Navigation -->
+    <nav class="fixed w-full top-0 z-50 glass-card border-b border-white/5">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex items-center justify-between h-16">
+          <div class="flex-shrink-0 flex items-center gap-2 cursor-pointer">
+            <div
+              class="w-8 h-8 rounded-full border-4 border-violet-600 flex items-center justify-center"
+            >
+              <div class="w-2 h-2 bg-violet-500 rounded-full"></div>
+            </div>
+            <span class="font-semibold text-lg tracking-tight">Screen Studio</span>
+          </div>
+          <div class="hidden md:block">
+            <div class="ml-10 flex items-baseline space-x-8">
+              <a
+                href="#"
+                class="text-zinc-400 hover:text-white px-3 py-2 text-sm font-medium transition-colors"
+                >Features</a
+              >
+              <a
+                href="#"
+                class="text-zinc-400 hover:text-white px-3 py-2 text-sm font-medium transition-colors"
+                >Testimonials</a
+              >
+              <a
+                href="#"
+                class="text-zinc-400 hover:text-white px-3 py-2 text-sm font-medium transition-colors"
+                >Pricing</a
+              >
+              <a
+                href="#"
+                class="text-zinc-400 hover:text-white px-3 py-2 text-sm font-medium transition-colors"
+                >FAQ</a
+              >
+              <a
+                href="#"
+                class="text-zinc-400 hover:text-white px-3 py-2 text-sm font-medium transition-colors"
+                >Blog</a
+              >
+            </div>
+          </div>
+          <div class="flex items-center gap-4">
+            <a
+              href="#"
+              class="text-sm font-medium text-zinc-400 hover:text-white hidden sm:block transition-colors"
+              >Sign in</a
+            >
+            <a
+              href="#"
+              class="bg-violet-600 hover:bg-violet-500 text-white px-5 py-2 rounded-full text-sm font-semibold transition-colors"
+              >Buy now</a
+            >
+          </div>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <main class="pt-32 pb-16 px-4 sm:px-6 lg:px-8 text-center max-w-5xl mx-auto mt-10">
+      <div
+        class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/5 border border-white/10 text-xs font-medium mb-8 text-zinc-300"
+      >
+        <span class="flex h-2 w-2 relative">
+          <span
+            class="animate-ping absolute inline-flex h-full w-full rounded-full bg-violet-400 opacity-75"
+          ></span>
+          <span class="relative inline-flex rounded-full h-2 w-2 bg-violet-500"></span>
+        </span>
+        New: Studio AI Features
+      </div>
+      <h1 class="text-5xl md:text-7xl font-bold tracking-tight mb-6 leading-tight">
+        Beautiful screen recordings <br />
+        in minutes
+      </h1>
+      <p class="text-xl text-zinc-400 mb-10 max-w-2xl mx-auto">
+        High quality videos as easy as taking a screenshot. Designed exclusively for macOS.
+      </p>
+      <div class="flex flex-col sm:flex-row justify-center gap-4 mb-16">
+        <a
+          href="#"
+          class="bg-violet-600 hover:bg-violet-500 text-white px-8 py-4 rounded-full text-lg font-semibold transition-all shadow-[0_0_30px_rgba(109,40,217,0.3)] hover:shadow-[0_0_40px_rgba(109,40,217,0.5)]"
+        >
+          Get Screen Studio
+        </a>
+      </div>
+
+      <!-- Main Hero Mockup -->
+      <div
+        class="relative mx-auto w-full max-w-4xl aspect-[16/10] bg-zinc-900 rounded-2xl overflow-hidden border border-white/10 shadow-2xl ring-1 ring-white/5"
+      >
+        <div class="absolute inset-0 bg-gradient-to-br from-zinc-800 to-black p-1">
+          <div
+            class="w-full h-full rounded-xl bg-zinc-950 border border-white/5 relative overflow-hidden flex flex-col"
+          >
+            <!-- Mac Window Header -->
+            <div class="h-10 border-b border-white/5 flex items-center px-4 bg-zinc-900/50">
+              <div class="flex gap-2">
+                <div class="w-3 h-3 rounded-full bg-red-500/80"></div>
+                <div class="w-3 h-3 rounded-full bg-yellow-500/80"></div>
+                <div class="w-3 h-3 rounded-full bg-green-500/80"></div>
+              </div>
+            </div>
+            <!-- Editor Body Placeholder -->
+            <div
+              class="flex-1 flex items-center justify-center text-zinc-700 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAiIGhlaWdodD0iMjAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGNpcmNsZSBjeD0iMiIgY3k9IjIiIHI9IjIiIGZpbGw9InJnYmEoMjU1LDI1NSwyNTUsMC4wMykiLz48L3N2Zz4=')]"
+            >
+              [ Main Interface / Editor UI Placeholder ]
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <!-- Trusted By Logos -->
+    <section class="border-y border-white/5 py-12">
+      <div class="max-w-7xl mx-auto px-4 text-center">
+        <p class="text-xs text-zinc-500 font-semibold tracking-[0.2em] uppercase mb-8">
+          Trusted by creators from
+        </p>
+        <div
+          class="flex flex-wrap justify-center items-center gap-x-12 gap-y-8 opacity-40 grayscale"
+        >
+          <span class="text-xl font-bold flex items-center gap-2"
+            ><svg class="w-6 h-6" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M12 2L2 22h20L12 2z" />
+            </svg>
+            Vercel</span
+          >
+          <span class="text-xl font-bold">N Notion</span>
+          <span class="text-xl font-bold text-zinc-300">Framer</span>
+          <span class="text-xl font-bold text-zinc-300">Linear</span>
+          <span class="text-xl font-bold flex items-center gap-2"
+            ><div class="w-5 h-5 rounded-full bg-white"></div>
+            Supabase</span
+          >
+        </div>
+      </div>
+    </section>
+
+    <!-- Made with Screen Studio -->
+    <section class="py-24 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+      <h2 class="text-3xl md:text-4xl font-bold mb-4">Made with Screen Studio</h2>
+      <p class="text-zinc-400 mb-12">
+        See what others are creating with the easiest screen recorder.
+      </p>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <div
+          class="aspect-video rounded-2xl bg-gradient-to-br from-violet-500/20 to-fuchsia-500/20 border border-white/10 p-2 relative group overflow-hidden"
+        >
+          <div
+            class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity z-10 bg-black/40 backdrop-blur-sm"
+          >
+            <button
+              class="w-16 h-16 rounded-full bg-white text-black flex items-center justify-center pl-1"
+            >
+              <svg class="w-8 h-8" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M8 5v14l11-7z" />
+              </svg>
+            </button>
+          </div>
+          <div
+            class="w-full h-full rounded-xl bg-zinc-900 flex items-center justify-center text-zinc-600"
+          >
+            [ Example Video 1 ]
+          </div>
+        </div>
+        <div
+          class="aspect-video rounded-2xl bg-gradient-to-br from-blue-500/20 to-cyan-500/20 border border-white/10 p-2 relative group overflow-hidden"
+        >
+          <div
+            class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity z-10 bg-black/40 backdrop-blur-sm"
+          >
+            <button
+              class="w-16 h-16 rounded-full bg-white text-black flex items-center justify-center pl-1"
+            >
+              <svg class="w-8 h-8" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M8 5v14l11-7z" />
+              </svg>
+            </button>
+          </div>
+          <div
+            class="w-full h-full rounded-xl bg-zinc-900 flex items-center justify-center text-zinc-600"
+          >
+            [ Example Video 2 ]
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Feature 1: Zoom & Pan -->
+    <section class="py-24 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-16 items-center">
+        <div
+          class="order-2 md:order-1 relative w-full aspect-[4/3] rounded-2xl bg-gradient-to-tr from-rose-500/20 to-orange-500/20 border border-white/10 p-2"
+        >
+          <div
+            class="w-full h-full rounded-xl bg-zinc-950 shadow-inner flex items-center justify-center text-zinc-600 border border-white/5"
+          >
+            [ Zoom & Pan UI Graphic ]
+          </div>
+        </div>
+        <div class="order-1 md:order-2">
+          <h2 class="text-3xl md:text-4xl font-bold mb-6">
+            Automatic zoom and pan on your recordings
+          </h2>
+          <p class="text-zinc-400 text-lg mb-8 leading-relaxed">
+            Focus the viewer's attention exactly where it's needed without complex keyframing or
+            editing tools.
+          </p>
+          <ul class="space-y-4">
+            <li class="flex items-start gap-3 text-zinc-300">
+              <div
+                class="mt-1 w-5 h-5 rounded-full bg-violet-500/20 text-violet-400 flex items-center justify-center shrink-0"
+              >
+                <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="3"
+                    d="M5 13l4 4L19 7"
+                  />
+                </svg>
+              </div>
+              Smooth animations applied instantly
+            </li>
+            <li class="flex items-start gap-3 text-zinc-300">
+              <div
+                class="mt-1 w-5 h-5 rounded-full bg-violet-500/20 text-violet-400 flex items-center justify-center shrink-0"
+              >
+                <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="3"
+                    d="M5 13l4 4L19 7"
+                  />
+                </svg>
+              </div>
+              Hide mouse cursor automatically when idle
+            </li>
+            <li class="flex items-start gap-3 text-zinc-300">
+              <div
+                class="mt-1 w-5 h-5 rounded-full bg-violet-500/20 text-violet-400 flex items-center justify-center shrink-0"
+              >
+                <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="3"
+                    d="M5 13l4 4L19 7"
+                  />
+                </svg>
+              </div>
+              Customizable zoom levels and speed
+            </li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- Feature 2: Professional Background -->
+    <section class="py-24 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-16 items-center">
+        <div>
+          <h2 class="text-3xl md:text-4xl font-bold mb-6">Professional background in 1-click</h2>
+          <p class="text-zinc-400 text-lg mb-8 leading-relaxed">
+            Instantly make your recordings look stunning with beautiful, customizable backgrounds
+            and shadows.
+          </p>
+          <ul class="space-y-4">
+            <li class="flex items-start gap-3 text-zinc-300">
+              <div
+                class="mt-1 w-5 h-5 rounded-full bg-violet-500/20 text-violet-400 flex items-center justify-center shrink-0"
+              >
+                <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="3"
+                    d="M5 13l4 4L19 7"
+                  />
+                </svg>
+              </div>
+              Dozens of hand-crafted presets
+            </li>
+            <li class="flex items-start gap-3 text-zinc-300">
+              <div
+                class="mt-1 w-5 h-5 rounded-full bg-violet-500/20 text-violet-400 flex items-center justify-center shrink-0"
+              >
+                <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="3"
+                    d="M5 13l4 4L19 7"
+                  />
+                </svg>
+              </div>
+              Auto-adjust padding and shadow depth
+            </li>
+            <li class="flex items-start gap-3 text-zinc-300">
+              <div
+                class="mt-1 w-5 h-5 rounded-full bg-violet-500/20 text-violet-400 flex items-center justify-center shrink-0"
+              >
+                <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="3"
+                    d="M5 13l4 4L19 7"
+                  />
+                </svg>
+              </div>
+              Use solid colors, gradients, or custom images
+            </li>
+          </ul>
+        </div>
+        <div
+          class="relative w-full aspect-[4/3] rounded-2xl bg-gradient-to-tr from-emerald-500/20 to-teal-500/20 border border-white/10 p-2"
+        >
+          <div
+            class="w-full h-full rounded-xl bg-zinc-950 shadow-inner flex items-center justify-center text-zinc-600 border border-white/5"
+          >
+            [ Background Settings Graphic ]
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 4-Grid: Edit your clips -->
+    <section class="py-24 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 border-t border-white/5">
+      <div class="mb-16 text-center md:text-left">
+        <h2 class="text-3xl md:text-4xl font-bold mb-4">Edit your clips and combine</h2>
+        <p class="text-zinc-400 text-lg">
+          Powerful built-in editor specifically designed for screen recordings.
+        </p>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+        <div
+          class="glass-card rounded-2xl p-6 flex flex-col gap-6 hover:bg-white/[0.03] transition-colors"
+        >
+          <div
+            class="w-12 h-12 rounded-lg bg-violet-500/20 text-violet-400 flex items-center justify-center"
+          >
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M14 10l-2 1m0 0l-2-1m2 1v2.5M20 7l-2 1m2-1l-2-1m2 1v2.5M14 4l-2-1-2 1M4 7l2-1M4 7l2 1M4 7v2.5M12 21l-2-1m2 1l2-1m-2 1v-2.5M6 18l-2-1v-2.5M18 18l2-1v-2.5"
+              />
+            </svg>
+          </div>
+          <div>
+            <h3 class="text-xl font-bold mb-2">Trim and cut</h3>
+            <p class="text-zinc-400 text-sm">
+              Remove mistakes, pauses, or irrelevant parts of your recording with a simple drag.
+            </p>
+          </div>
+          <div
+            class="mt-auto aspect-[2/1] bg-black rounded-lg border border-white/5 flex items-center justify-center text-zinc-700"
+          >
+            [ Timeline UI ]
+          </div>
+        </div>
+
+        <div
+          class="glass-card rounded-2xl p-6 flex flex-col gap-6 hover:bg-white/[0.03] transition-colors"
+        >
+          <div
+            class="w-12 h-12 rounded-lg bg-blue-500/20 text-blue-400 flex items-center justify-center"
+          >
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"
+              />
+            </svg>
+          </div>
+          <div>
+            <h3 class="text-xl font-bold mb-2">Combine multiple clips</h3>
+            <p class="text-zinc-400 text-sm">
+              Record different parts and merge them seamlessly into a single polished video.
+            </p>
+          </div>
+          <div
+            class="mt-auto aspect-[2/1] bg-black rounded-lg border border-white/5 flex items-center justify-center text-zinc-700"
+          >
+            [ Combine UI ]
+          </div>
+        </div>
+
+        <div
+          class="glass-card rounded-2xl p-6 flex flex-col gap-6 hover:bg-white/[0.03] transition-colors"
+        >
+          <div
+            class="w-12 h-12 rounded-lg bg-pink-500/20 text-pink-400 flex items-center justify-center"
+          >
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z"
+              />
+            </svg>
+          </div>
+          <div>
+            <h3 class="text-xl font-bold mb-2">Enhance Audio</h3>
+            <p class="text-zinc-400 text-sm">
+              Automatically remove background noise and enhance your voice to sound like a studio
+              mic.
+            </p>
+          </div>
+          <div
+            class="mt-auto aspect-[2/1] bg-black rounded-lg border border-white/5 flex items-center justify-center text-zinc-700"
+          >
+            [ Audio Waveform UI ]
+          </div>
+        </div>
+
+        <div
+          class="glass-card rounded-2xl p-6 flex flex-col gap-6 hover:bg-white/[0.03] transition-colors"
+        >
+          <div
+            class="w-12 h-12 rounded-lg bg-orange-500/20 text-orange-400 flex items-center justify-center"
+          >
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"
+              />
+            </svg>
+          </div>
+          <div>
+            <h3 class="text-xl font-bold mb-2">Add Webcam</h3>
+            <p class="text-zinc-400 text-sm">
+              Include your camera bubble. Move it around, resize it, and apply automatic background
+              removal.
+            </p>
+          </div>
+          <div
+            class="mt-auto aspect-[2/1] bg-black rounded-lg border border-white/5 flex items-center justify-center text-zinc-700"
+          >
+            [ Webcam Overlay UI ]
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Banner Section -->
+    <section class="py-12 px-4 sm:px-6 lg:px-8">
+      <div class="max-w-7xl mx-auto">
+        <div
+          class="w-full rounded-3xl p-8 md:p-12 feature-gradient-3 shadow-2xl relative overflow-hidden"
+        >
+          <div class="relative z-10 md:w-1/2">
+            <h2 class="text-3xl md:text-5xl font-bold text-white mb-4">Easy screen recording</h2>
+            <p class="text-white/80 text-lg mb-8">
+              It has never been easier to create beautiful tutorials, promotional videos, and
+              updates.
+            </p>
+          </div>
+          <div
+            class="md:absolute right-0 top-1/2 md:-translate-y-1/2 mt-8 md:mt-0 w-full md:w-1/2 h-48 bg-black/40 backdrop-blur-md rounded-xl border border-white/20 flex items-center justify-center text-white/50 shadow-2xl mr-8"
+          >
+            [ Timeline Scrubber UI Graphic ]
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Mobile Recording Section (3 Cols) -->
+    <section class="py-24 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 border-t border-white/5">
+      <div class="text-center mb-16">
+        <h2 class="text-3xl md:text-4xl font-bold mb-4">Record iPhone and iPad on your Mac</h2>
+        <p class="text-zinc-400 text-lg">
+          Connect your device and record it directly. Screen Studio will automatically apply a
+          beautiful device frame.
+        </p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div
+          class="glass-card rounded-2xl p-4 flex flex-col items-center border border-white/10 pt-10"
+        >
+          <div
+            class="w-48 h-96 bg-black rounded-[2rem] border-4 border-zinc-800 flex items-center justify-center text-zinc-700 shadow-2xl relative"
+          >
+            <!-- Notch -->
+            <div
+              class="absolute top-0 left-1/2 -translate-x-1/2 w-20 h-5 bg-zinc-800 rounded-b-xl"
+            ></div>
+            [ iOS UI ]
+          </div>
+          <div class="mt-8 text-center pb-4">
+            <h3 class="font-bold text-lg">iPhone Frames</h3>
+          </div>
+        </div>
+
+        <div
+          class="glass-card rounded-2xl p-4 flex flex-col items-center border border-white/10 pt-10 bg-gradient-to-b from-violet-900/10 to-transparent"
+        >
+          <div
+            class="w-64 h-80 bg-black rounded-2xl border-4 border-zinc-800 flex items-center justify-center text-zinc-700 shadow-2xl relative"
+          >
+            [ iPad UI ]
+          </div>
+          <div class="mt-8 text-center pb-4">
+            <h3 class="font-bold text-lg">iPad Frames</h3>
+          </div>
+        </div>
+
+        <div
+          class="glass-card rounded-2xl p-4 flex flex-col items-center border border-white/10 pt-10"
+        >
+          <div
+            class="w-48 h-96 bg-black rounded-[2rem] border-4 border-zinc-800 flex items-center justify-center text-zinc-700 shadow-2xl relative transform rotate-6"
+          >
+            <div
+              class="absolute top-0 left-1/2 -translate-x-1/2 w-20 h-5 bg-zinc-800 rounded-b-xl"
+            ></div>
+            [ Smooth Motion UI ]
+          </div>
+          <div class="mt-8 text-center pb-4">
+            <h3 class="font-bold text-lg">Smooth Motion</h3>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Large Testimonial Grid -->
+    <section class="py-24 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 border-t border-white/5 bg-black">
+      <div class="text-center mb-16">
+        <h2 class="text-3xl md:text-5xl font-bold mb-4">More Reviews for Screen Studio</h2>
+        <p class="text-zinc-400">
+          Loved by thousands of creators, founders, and developers around the world.
+        </p>
+      </div>
+
+      <div class="columns-1 sm:columns-2 md:columns-3 lg:columns-4 gap-4 space-y-4">
+        <!-- Review Card 1 -->
+        <div
+          class="glass-card p-5 rounded-xl flex flex-col gap-4 break-inside-avoid shadow-lg hover:-translate-y-1 transition-transform"
+        >
+          <div class="flex items-center gap-3">
+            <div
+              class="w-10 h-10 rounded-full bg-violet-600 flex items-center justify-center text-sm font-bold"
+            >
+              JD
+            </div>
+            <div>
+              <div class="font-medium text-sm">John Doe</div>
+              <div class="text-xs text-zinc-500">@johndoe</div>
+            </div>
+          </div>
+          <p class="text-sm text-zinc-300 leading-relaxed">
+            "Screen Studio completely changed how I make tutorial videos. The automatic zooming
+            feature saves me hours of editing time in Premiere Pro. Cannot recommend it enough!"
+          </p>
+        </div>
+
+        <!-- Review Card 2 -->
+        <div
+          class="glass-card p-5 rounded-xl flex flex-col gap-4 break-inside-avoid shadow-lg hover:-translate-y-1 transition-transform"
+        >
+          <div class="flex items-center gap-3">
+            <img
+              src="https://i.pravatar.cc/100?img=1"
+              alt="User"
+              class="w-10 h-10 rounded-full bg-zinc-800"
+            />
+            <div>
+              <div class="font-medium text-sm">Jane Smith</div>
+              <div class="text-xs text-zinc-500">@janesmith</div>
+            </div>
+          </div>
+          <p class="text-sm text-zinc-300 leading-relaxed">
+            "The best software purchase I've made this year. It makes standard screen recordings
+            look like they were produced by an entire video team. The UI is absolutely gorgeous
+            too."
+          </p>
+        </div>
+
+        <!-- Review Card 3 -->
+        <div
+          class="glass-card p-5 rounded-xl flex flex-col gap-4 break-inside-avoid shadow-lg hover:-translate-y-1 transition-transform"
+        >
+          <div class="flex items-center gap-3">
+            <img
+              src="https://i.pravatar.cc/100?img=2"
+              alt="User"
+              class="w-10 h-10 rounded-full bg-zinc-800"
+            />
+            <div>
+              <div class="font-medium text-sm">Alex Chen</div>
+              <div class="text-xs text-zinc-500">@alexchen</div>
+            </div>
+          </div>
+          <p class="text-sm text-zinc-300 leading-relaxed">
+            "Incredible tool. The mouse smoothing alone is worth the price. I use it for all my
+            indie hacking product demos now."
+          </p>
+        </div>
+
+        <!-- Review Card 4 -->
+        <div
+          class="glass-card p-5 rounded-xl flex flex-col gap-4 break-inside-avoid shadow-lg hover:-translate-y-1 transition-transform"
+        >
+          <div class="flex items-center gap-3">
+            <div
+              class="w-10 h-10 rounded-full bg-blue-600 flex items-center justify-center text-sm font-bold"
+            >
+              SJ
+            </div>
+            <div>
+              <div class="font-medium text-sm">Sarah Jones</div>
+              <div class="text-xs text-zinc-500">@sarahcodes</div>
+            </div>
+          </div>
+          <p class="text-sm text-zinc-300 leading-relaxed">
+            "A masterclass in UI/UX design. The app is a joy to use and the output is instantly
+            professional. If you make videos for software, buy this."
+          </p>
+        </div>
+
+        <!-- Review Card 5 -->
+        <div
+          class="glass-card p-5 rounded-xl flex flex-col gap-4 break-inside-avoid shadow-lg hover:-translate-y-1 transition-transform"
+        >
+          <div class="flex items-center gap-3">
+            <img
+              src="https://i.pravatar.cc/100?img=3"
+              alt="User"
+              class="w-10 h-10 rounded-full bg-zinc-800"
+            />
+            <div>
+              <div class="font-medium text-sm">Mark T.</div>
+              <div class="text-xs text-zinc-500">@marktech</div>
+            </div>
+          </div>
+          <p class="text-sm text-zinc-300 leading-relaxed">
+            "Wow. Just exported my first video and it literally took me 3 minutes from hit record to
+            final MP4. Normally this takes me an hour."
+          </p>
+        </div>
+
+        <!-- Review Card 6 -->
+        <div
+          class="glass-card p-5 rounded-xl flex flex-col gap-4 break-inside-avoid shadow-lg hover:-translate-y-1 transition-transform"
+        >
+          <div class="flex items-center gap-3">
+            <div
+              class="w-10 h-10 rounded-full bg-emerald-600 flex items-center justify-center text-sm font-bold"
+            >
+              EL
+            </div>
+            <div>
+              <div class="font-medium text-sm">Emma L.</div>
+              <div class="text-xs text-zinc-500">@emmalearns</div>
+            </div>
+          </div>
+          <p class="text-sm text-zinc-300 leading-relaxed">
+            "I am not a video editor. Screen Studio makes me look like one. The way it auto-follows
+            my clicks is magic."
+          </p>
+        </div>
+
+        <!-- Review Card 7 -->
+        <div
+          class="glass-card p-5 rounded-xl flex flex-col gap-4 break-inside-avoid shadow-lg hover:-translate-y-1 transition-transform"
+        >
+          <div class="flex items-center gap-3">
+            <img
+              src="https://i.pravatar.cc/100?img=4"
+              alt="User"
+              class="w-10 h-10 rounded-full bg-zinc-800"
+            />
+            <div>
+              <div class="font-medium text-sm">David W.</div>
+              <div class="text-xs text-zinc-500">@davidw</div>
+            </div>
+          </div>
+          <p class="text-sm text-zinc-300 leading-relaxed">
+            "Screen Studio has become an indispensable part of our SaaS onboarding workflow. Every
+            support video is created with it."
+          </p>
+        </div>
+
+        <!-- Review Card 8 -->
+        <div
+          class="glass-card p-5 rounded-xl flex flex-col gap-4 break-inside-avoid shadow-lg hover:-translate-y-1 transition-transform"
+        >
+          <div class="flex items-center gap-3">
+            <img
+              src="https://i.pravatar.cc/100?img=5"
+              alt="User"
+              class="w-10 h-10 rounded-full bg-zinc-800"
+            />
+            <div>
+              <div class="font-medium text-sm">Chris P.</div>
+              <div class="text-xs text-zinc-500">@chrisp_dev</div>
+            </div>
+          </div>
+          <p class="text-sm text-zinc-300 leading-relaxed">
+            "10/10. Worth every penny. The time saved is ridiculous."
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Footer CTA -->
+    <footer
+      class="pt-24 pb-12 text-center border-t border-white/5 bg-zinc-950 relative overflow-hidden"
+    >
+      <!-- Subtle bottom glow -->
+      <div
+        class="absolute bottom-0 left-1/2 -translate-x-1/2 w-full max-w-2xl h-64 bg-violet-600/10 blur-[100px] pointer-events-none"
+      ></div>
+
+      <div class="relative z-10">
+        <div
+          class="w-16 h-16 rounded-full border-4 border-violet-600 flex items-center justify-center mx-auto mb-8 bg-black"
+        >
+          <div class="w-4 h-4 bg-violet-500 rounded-full"></div>
+        </div>
+        <h2 class="text-4xl md:text-5xl font-bold mb-6 tracking-tight">Designed for macOS</h2>
+        <p class="text-zinc-400 mb-10 text-lg">Native performance. Apple Silicon ready.</p>
+
+        <div class="flex justify-center gap-4 mb-16">
+          <!-- OS Icons -->
+          <div
+            class="w-14 h-14 bg-zinc-900 rounded-xl flex items-center justify-center border border-white/10 shadow-lg text-xl font-bold text-white"
+          >
+            OS
+          </div>
+          <div
+            class="w-14 h-14 bg-violet-900/40 rounded-xl flex items-center justify-center border border-violet-500/50 shadow-lg text-xl font-bold text-violet-300"
+          >
+            M1
+          </div>
+          <div
+            class="w-14 h-14 bg-indigo-900/40 rounded-xl flex items-center justify-center border border-indigo-500/50 shadow-lg text-xl font-bold text-indigo-300"
+          >
+            M2
+          </div>
+          <div
+            class="w-14 h-14 bg-blue-900/40 rounded-xl flex items-center justify-center border border-blue-500/50 shadow-lg text-xl font-bold text-blue-300"
+          >
+            M3
+          </div>
+        </div>
+
+        <div class="flex justify-center mb-16">
+          <a
+            href="#"
+            class="bg-white hover:bg-zinc-200 text-black px-8 py-4 rounded-full text-lg font-bold transition-colors shadow-xl"
+          >
+            Get Screen Studio
+          </a>
+        </div>
+
+        <!-- Footer Links -->
+        <div
+          class="max-w-5xl mx-auto px-4 border-t border-white/5 pt-8 flex flex-col md:flex-row justify-between items-center text-sm text-zinc-500 gap-4"
+        >
+          <div class="flex gap-6">
+            <a href="#" class="hover:text-white transition-colors">Privacy Policy</a>
+            <a href="#" class="hover:text-white transition-colors">Terms of Service</a>
+            <a href="#" class="hover:text-white transition-colors">Contact</a>
+          </div>
+          <div>&copy; 2026 Screen Studio. All rights reserved.</div>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>

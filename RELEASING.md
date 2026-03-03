@@ -1,4 +1,4 @@
-# Releasing `@steipete/summarize` (npm + Homebrew/Bun)
+# Releasing `@creativerezz/summarize` (npm + Homebrew/Bun)
 
 Ship is **not done** until:
 
@@ -109,10 +109,10 @@ Ship is **not done** until:
    - Smoke:
      ```bash
      ver="$(node -p 'require(\"./package.json\").version')"
-     npm view @steipete/summarize version
-     npm view @steipete/summarize-core version
-     pnpm -s dlx @steipete/summarize@"${ver}" --version
-     pnpm -s dlx @steipete/summarize@"${ver}" --help >/dev/null
+     npm view @creativerezz/summarize version
+     npm view @creativerezz/summarize-core version
+     pnpm -s dlx @creativerezz/summarize@"${ver}" --version
+     pnpm -s dlx @creativerezz/summarize@"${ver}" --help >/dev/null
      ```
 
 ## npm (npmjs)

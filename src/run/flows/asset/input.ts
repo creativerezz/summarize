@@ -1,4 +1,4 @@
-import { isDirectMediaExtension, isDirectMediaUrl } from "@steipete/summarize-core/content/url";
+import { isDirectMediaExtension, isDirectMediaUrl } from "@creativerezz/summarize-core/content/url";
 import fs from "node:fs/promises";
 import path from "node:path";
 import type { SummarizeAssetArgs } from "./summary.js";

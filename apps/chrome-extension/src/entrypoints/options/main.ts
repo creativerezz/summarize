@@ -7,6 +7,7 @@ import {
 } from "../../automation/skills-store";
 import { buildUserScriptsGuidance, getUserScriptsStatus } from "../../automation/userscripts";
 import { readPresetOrCustomValue, resolvePresetOrCustom } from "../../lib/combo";
+import { PATTERNS } from "../../lib/patterns";
 import { defaultSettings, loadSettings, saveSettings } from "../../lib/settings";
 import { applyTheme, type ColorMode, type ColorScheme } from "../../lib/theme";
 import { mountCheckbox } from "../../ui/zag-checkbox";
@@ -45,6 +46,16 @@ const modelCustomEl = byId<HTMLInputElement>("modelCustom");
 const languagePresetEl = byId<HTMLSelectElement>("languagePreset");
 const languageCustomEl = byId<HTMLInputElement>("languageCustom");
 const promptOverrideEl = byId<HTMLTextAreaElement>("promptOverride");
+const patternSelectEl = byId<HTMLSelectElement>("patternSelect");
+
+(() => {
+  for (const p of PATTERNS) {
+    const opt = document.createElement("option");
+    opt.value = p.id;
+    opt.textContent = p.label;
+    patternSelectEl.appendChild(opt);
+  }
+})();
 const autoToggleRoot = byId<HTMLDivElement>("autoToggle");
 const maxCharsEl = byId<HTMLInputElement>("maxChars");
 const hoverPromptEl = byId<HTMLTextAreaElement>("hoverPrompt");
@@ -280,6 +291,7 @@ const saveNow = async () => {
         defaultValue: defaultSettings.language,
       }),
       promptOverride: promptOverrideEl.value || defaultSettings.promptOverride,
+      pattern: patternSelectEl.value || defaultSettings.pattern,
       hoverPrompt: hoverPromptEl.value || defaultSettings.hoverPrompt,
       autoSummarize: autoValue,
       hoverSummaries: hoverSummariesValue,
@@ -1262,6 +1274,7 @@ async function load() {
     languageCustomEl.value = resolved.customValue;
   }
   promptOverrideEl.value = s.promptOverride;
+  patternSelectEl.value = s.pattern ?? "";
   hoverPromptEl.value = s.hoverPrompt || defaultSettings.hoverPrompt;
   autoValue = s.autoSummarize;
   chatEnabledValue = s.chatEnabled;
@@ -1385,6 +1398,10 @@ languageCustomEl.addEventListener("input", () => {
 
 promptOverrideEl.addEventListener("input", () => {
   scheduleAutoSave(600);
+});
+
+patternSelectEl.addEventListener("change", () => {
+  scheduleAutoSave(200);
 });
 
 hoverPromptEl.addEventListener("input", () => {

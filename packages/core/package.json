@@ -1,5 +1,5 @@
 {
-  "name": "@steipete/summarize-core",
+  "name": "@creativerezz/summarize-core",
   "version": "0.11.2",
   "description": "Summarize core library (content extraction + prompts).",
   "files": [

@@ -41,7 +41,7 @@ YouTube slide screenshots (from the browser):
 ### Beginner quickstart (extension)
 
 1. Install the CLI (choose one):
-   - **npm** (cross‑platform): `npm i -g @steipete/summarize`
+   - **npm** (cross‑platform): `npm i -g @creativerezz/summarize`
    - **Homebrew** (macOS arm64): `brew install steipete/tap/summarize`
 2. Install the extension (Chrome Web Store link above) and open the Side Panel.
 3. The panel shows a token + install command. Run it in Terminal:
@@ -99,23 +99,23 @@ Requires Node 22+.
 - npx (no install):
 
 ```bash
-npx -y @steipete/summarize "https://example.com"
+npx -y @creativerezz/summarize "https://example.com"
 ```
 
 - npm (global):
 
 ```bash
-npm i -g @steipete/summarize
+npm i -g @creativerezz/summarize
 ```
 
 - npm (library / minimal deps):
 
 ```bash
-npm i @steipete/summarize-core
+npm i @creativerezz/summarize-core
 ```
 
 ```ts
-import { createLinkPreviewClient } from "@steipete/summarize-core/content";
+import { createLinkPreviewClient } from "@creativerezz/summarize-core/content";
 ```
 
 - Homebrew (custom tap):
@@ -654,13 +654,13 @@ The CLI uses the LiteLLM model catalog for model limits (like max output tokens)
 
 Recommended (minimal deps):
 
-- `@steipete/summarize-core/content`
-- `@steipete/summarize-core/prompts`
+- `@creativerezz/summarize-core/content`
+- `@creativerezz/summarize-core/prompts`
 
 Compatibility (pulls in CLI deps):
 
-- `@steipete/summarize/content`
-- `@steipete/summarize/prompts`
+- `@creativerezz/summarize/content`
+- `@creativerezz/summarize/prompts`
 
 ### Development
 

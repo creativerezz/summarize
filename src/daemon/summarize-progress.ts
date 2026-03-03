@@ -1,4 +1,4 @@
-import { type LinkPreviewProgressEvent, ProgressKind } from "@steipete/summarize-core/content";
+import { type LinkPreviewProgressEvent, ProgressKind } from "@creativerezz/summarize-core/content";
 
 function clampPercent(value: number): number {
   if (!Number.isFinite(value)) return 0;

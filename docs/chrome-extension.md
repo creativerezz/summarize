@@ -11,7 +11,7 @@ Goal: Chrome **Side Panel** (“real sidebar”) summarizes **what you see** on 
 Quickstart:
 
 - Install summarize (choose one):
-  - `npm i -g @steipete/summarize`
+  - `npm i -g @creativerezz/summarize`
   - `brew install steipete/tap/summarize` (macOS arm64)
 - Build/load extension: `apps/chrome-extension/README.md`
 - Firefox sidebar build: `pnpm -C apps/chrome-extension build:firefox` (load via `about:debugging` → temporary add-on)

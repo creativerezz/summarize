@@ -1,6 +1,9 @@
 import type { AssistantMessage, Message, ToolCall, ToolResultMessage } from "@mariozechner/pi-ai";
-import { extractYouTubeVideoId, shouldPreferUrlMode } from "@steipete/summarize-core/content/url";
-import { SUMMARY_LENGTH_SPECS } from "@steipete/summarize-core/prompts";
+import {
+  extractYouTubeVideoId,
+  shouldPreferUrlMode,
+} from "@creativerezz/summarize-core/content/url";
+import { SUMMARY_LENGTH_SPECS } from "@creativerezz/summarize-core/prompts";
 import MarkdownIt from "markdown-it";
 import type { SummaryLength } from "../../../../../src/shared/contracts.js";
 import type { ChatMessage, PanelPhase, PanelState, RunStart, UiState } from "./types";
@@ -36,7 +39,10 @@ import { createErrorController } from "./error-controller";
 import { createHeaderController } from "./header-controller";
 import { createPanelCacheController, type PanelCachePayload } from "./panel-cache";
 import {
+  mountHeaderPatternPicker,
+  mountQuickPatternChips,
   mountSidepanelLengthPicker,
+  mountSidepanelPatternPicker,
   mountSidepanelPickers,
   mountSummarizeControl,
 } from "./pickers";
@@ -65,6 +71,7 @@ type PanelToBg =
   | { type: "panel:rememberUrl"; url: string }
   | { type: "panel:setAuto"; value: boolean }
   | { type: "panel:setLength"; value: string }
+  | { type: "panel:setPattern"; value: string }
   | { type: "panel:slides-context"; requestId: string; url?: string }
   | { type: "panel:cache"; cache: PanelCachePayload }
   | { type: "panel:get-cache"; requestId: string; tabId: number; url: string }
@@ -169,13 +176,17 @@ const chatMetricsSlotEl = byId<HTMLDivElement>("chatMetricsSlot");
 const chatDockEl = byId<HTMLDivElement>("chatDock");
 const slideImageLoader = createSlideImageLoader();
 
+const quickPatternRoot = byId<HTMLElement>("quickPatternRoot");
+const headerPatternRoot = byId<HTMLElement>("headerPatternRoot");
 const summarizeControlRoot = byId<HTMLElement>("summarizeControlRoot");
+const copyBtn = byId<HTMLButtonElement>("copyBtn");
 const drawerToggleBtn = byId<HTMLButtonElement>("drawerToggle");
 const refreshBtn = byId<HTMLButtonElement>("refresh");
 const clearBtn = byId<HTMLButtonElement>("clear");
 const advancedBtn = byId<HTMLButtonElement>("advanced");
 const autoToggleRoot = byId<HTMLDivElement>("autoToggle");
 const lengthRoot = byId<HTMLDivElement>("lengthRoot");
+const patternRoot = byId<HTMLDivElement>("patternRoot");
 const pickersRoot = byId<HTMLDivElement>("pickersRoot");
 const sizeSmBtn = byId<HTMLButtonElement>("sizeSm");
 const sizeLgBtn = byId<HTMLButtonElement>("sizeLg");
@@ -701,6 +712,23 @@ function setSlidesLayout(next: SlidesLayout) {
   applySlidesLayout();
 }
 
+function handleQuickPatternSelect(patternId: string) {
+  const alreadySelected = (pickerSettings.pattern ?? "") === patternId;
+  const nextPattern = alreadySelected ? "" : patternId;
+  pickerSettings = { ...pickerSettings, pattern: nextPattern };
+  patternPicker.update({
+    pattern: nextPattern,
+    onPatternChange: pickerHandlers.onPatternChange,
+  });
+  headerPatternPicker.update({
+    pattern: nextPattern,
+    onPatternChange: pickerHandlers.onPatternChange,
+  });
+  refreshQuickPatternChips();
+  void send({ type: "panel:setPattern", value: nextPattern });
+  if (alreadySelected) sendSummarize();
+}
+
 const summarizeControl = mountSummarizeControl(summarizeControlRoot, {
   mode: inputMode,
   slidesEnabled: slidesEnabledValue,
@@ -714,7 +742,20 @@ const summarizeControl = mountSummarizeControl(summarizeControlRoot, {
   onSummarize: () => sendSummarize(),
 });
 
+function refreshQuickPatternChips() {
+  quickPatternChips.update({
+    onSelect: handleQuickPatternSelect,
+    currentPattern: pickerSettings.pattern,
+    busy: slidesBusy,
+  });
+  headerPatternPicker.update({
+    pattern: pickerSettings.pattern,
+    onPatternChange: pickerHandlers.onPatternChange,
+  });
+}
+
 function refreshSummarizeControl() {
+  refreshQuickPatternChips();
   summarizeControl.update({
     mode: inputMode,
     slidesEnabled: slidesEnabledValue,
@@ -861,6 +902,7 @@ const setPhase = (phase: PanelPhase, opts?: { error?: string | null }) => {
     rebuildSlideDescriptions();
     queueSlidesRender();
   }
+  copyBtn.disabled = !panelState.summaryMarkdown;
 };
 
 chrome.runtime.onMessage.addListener((raw, _sender, sendResponse) => {
@@ -2427,6 +2469,7 @@ let pickerSettings = {
   mode: defaultSettings.colorMode,
   fontFamily: defaultSettings.fontFamily,
   length: defaultSettings.length,
+  pattern: defaultSettings.pattern,
 };
 
 const pickerHandlers = {
@@ -2457,6 +2500,12 @@ const pickerHandlers = {
     pickerSettings = { ...pickerSettings, length: value };
     void send({ type: "panel:setLength", value });
   },
+  onPatternChange: (value) => {
+    pickerSettings = { ...pickerSettings, pattern: value };
+    patternPicker.update({ pattern: value, onPatternChange: pickerHandlers.onPatternChange });
+    refreshQuickPatternChips();
+    void send({ type: "panel:setPattern", value });
+  },
 };
 
 const pickers = mountSidepanelPickers(pickersRoot, {
@@ -2471,6 +2520,22 @@ const pickers = mountSidepanelPickers(pickersRoot, {
 const lengthPicker = mountSidepanelLengthPicker(lengthRoot, {
   length: pickerSettings.length,
   onLengthChange: pickerHandlers.onLengthChange,
+});
+
+const patternPicker = mountSidepanelPatternPicker(patternRoot, {
+  pattern: pickerSettings.pattern,
+  onPatternChange: pickerHandlers.onPatternChange,
+});
+
+const quickPatternChips = mountQuickPatternChips(quickPatternRoot, {
+  onSelect: handleQuickPatternSelect,
+  currentPattern: pickerSettings.pattern,
+  busy: false,
+});
+
+const headerPatternPicker = mountHeaderPatternPicker(headerPatternRoot, {
+  pattern: pickerSettings.pattern,
+  onPatternChange: pickerHandlers.onPatternChange,
 });
 
 const autoToggle = mountCheckbox(autoToggleRoot, {
@@ -3205,8 +3270,8 @@ function installStepsHtml({
   message?: string;
   showTroubleshooting?: boolean;
 }) {
-  const npmCmd = "npm i -g @steipete/summarize";
-  const brewCmd = "brew install steipete/tap/summarize";
+  const npmCmd = "npm i -g @creativerezz/summarize";
+  const brewCmd = "brew install creativerezz/tap/summarize";
   const daemonCmd = `summarize daemon install --token ${token}`;
   const isMac = platformKind === "mac";
   const isLinux = platformKind === "linux";
@@ -3318,8 +3383,8 @@ function wireSetupButtons({
   token: string;
   showTroubleshooting?: boolean;
 }) {
-  const npmCmd = "npm i -g @steipete/summarize";
-  const brewCmd = "brew install steipete/tap/summarize";
+  const npmCmd = "npm i -g @creativerezz/summarize";
+  const brewCmd = "brew install creativerezz/tap/summarize";
   const daemonCmd = `summarize daemon install --token ${token}`;
   const isMac = platformKind === "mac";
   const installMethodKey = "summarize.installMethod";
@@ -3614,6 +3679,18 @@ function updateControls(state: UiState) {
     if (panelState.summaryMarkdown) {
       renderInlineSlides(renderMarkdownHostEl, { fallback: true });
     }
+  }
+  if (pickerSettings.pattern !== (state.settings.pattern ?? "")) {
+    pickerSettings = { ...pickerSettings, pattern: state.settings.pattern ?? "" };
+    patternPicker.update({
+      pattern: pickerSettings.pattern,
+      onPatternChange: pickerHandlers.onPatternChange,
+    });
+    headerPatternPicker.update({
+      pattern: pickerSettings.pattern,
+      onPatternChange: pickerHandlers.onPatternChange,
+    });
+    refreshQuickPatternChips();
   }
   if (
     state.settings.fontSize !== currentFontSize ||
@@ -4164,6 +4241,14 @@ clearBtn.addEventListener("click", () => {
   void clearCurrentView();
 });
 drawerToggleBtn.addEventListener("click", () => toggleDrawer());
+copyBtn.addEventListener("click", () => {
+  const text = panelState.summaryMarkdown;
+  if (!text) return;
+  void navigator.clipboard.writeText(text).then(() => {
+    headerController.setStatus("Copied");
+    setTimeout(() => headerController.setStatus(panelState.ui?.status ?? ""), 800);
+  });
+});
 advancedBtn.addEventListener("click", () => {
   void send({ type: "panel:openOptions" });
 });

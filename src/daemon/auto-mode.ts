@@ -1,4 +1,4 @@
-import { shouldPreferUrlMode } from "@steipete/summarize-core/content/url";
+import { shouldPreferUrlMode } from "@creativerezz/summarize-core/content/url";
 
 export type DaemonRequestedMode = "auto" | "page" | "url";
 

@@ -8,7 +8,7 @@
 
 ### Fixes
 
-- npm packaging: publish CLI with `pnpm publish` so `@steipete/summarize-core` is version-pinned in published metadata (no `workspace:*` in registry package).
+- npm packaging: publish CLI with `pnpm publish` so `@creativerezz/summarize-core` is version-pinned in published metadata (no `workspace:*` in registry package).
 - CLI help: surface `summarize refresh-free` in `summarize help` output.
 
 ## 0.11.0 - 2026-02-14
@@ -163,7 +163,7 @@
 
 ### Breaking
 
-- ESM-only: `@steipete/summarize` + `@steipete/summarize-core` no longer support CommonJS `require()`; the CLI binary is now ESM.
+- ESM-only: `@steipete/summarize` + `@creativerezz/summarize-core` no longer support CommonJS `require()`; the CLI binary is now ESM.
 
 ### Highlights
 
@@ -187,7 +187,7 @@
 - Chrome Side Panel: add length + language controls (presets + custom), forwarded to the daemon.
 - Daemon API: `mode: "auto"` accepts both `url` + extracted page `text`; daemon picks the best pipeline (YouTube/podcasts/media → URL, otherwise prefer visible page text) with a fallback attempt.
 - Daemon/Chrome: stream extra run metadata (`inputSummary`, `modelLabel`) over SSE for richer panel status.
-- Core: expose lightweight URL helpers at `@steipete/summarize-core/content/url` (YouTube/Twitter/podcast/direct-media detection).
+- Core: expose lightweight URL helpers at `@creativerezz/summarize-core/content/url` (YouTube/Twitter/podcast/direct-media detection).
 - Chrome Side Panel: new icon + extension `homepage_url` set to `summarize.sh`.
 - Providers: add configurable API base URLs (config + env) for OpenAI/Anthropic/Google/xAI (thanks @bunchjesse for the nudge).
 
@@ -213,13 +213,13 @@
 
 ### Fixed
 
-- Packaging: `@steipete/summarize-core` now ships a CJS build for `require()` consumers (fixes `pnpm dlx @steipete/summarize --help` and the published CLI runtime).
+- Packaging: `@creativerezz/summarize-core` now ships a CJS build for `require()` consumers (fixes `pnpm dlx @steipete/summarize --help` and the published CLI runtime).
 
 ## 0.7.0 - 2025-12-26
 
 ### Highlights
 
-- Packages: split into `@steipete/summarize-core` (library) + `@steipete/summarize` (CLI; depends on core). Versions are lockstep.
+- Packages: split into `@creativerezz/summarize-core` (library) + `@steipete/summarize` (CLI; depends on core). Versions are lockstep.
 - Streaming: scrollback-safe Markdown streaming (hybrid: line-by-line + block buffering for fenced code + tables). No cursor control, no full-frame redraws.
 - Output: Markdown rendering is automatic on TTY; use `--plain` for raw Markdown/text output.
 - Finish line: compact separators (`·`) and no duplicated `… words` when transcript stats are shown.

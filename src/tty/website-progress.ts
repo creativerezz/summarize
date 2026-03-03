@@ -1,4 +1,4 @@
-import type { LinkPreviewProgressEvent } from "@steipete/summarize-core/content";
+import type { LinkPreviewProgressEvent } from "@creativerezz/summarize-core/content";
 import type { OscProgressController } from "./osc-progress.js";
 import type { ThemeRenderer } from "./theme.js";
 import { formatBytes } from "./format.js";

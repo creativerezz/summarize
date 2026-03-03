@@ -23,23 +23,23 @@ export default defineConfig({
   resolve: {
     alias: [
       {
-        find: /^@steipete\/summarize-core\/content$/,
+        find: /^@creativerezz\/summarize-core\/content$/,
         replacement: resolve(rootDir, "packages/core/src/content/index.ts"),
       },
       {
-        find: /^@steipete\/summarize-core\/content\/url$/,
+        find: /^@creativerezz\/summarize-core\/content\/url$/,
         replacement: resolve(rootDir, "packages/core/src/content/url.ts"),
       },
       {
-        find: /^@steipete\/summarize-core\/prompts$/,
+        find: /^@creativerezz\/summarize-core\/prompts$/,
         replacement: resolve(rootDir, "packages/core/src/prompts/index.ts"),
       },
       {
-        find: /^@steipete\/summarize-core\/language$/,
+        find: /^@creativerezz\/summarize-core\/language$/,
         replacement: resolve(rootDir, "packages/core/src/language.ts"),
       },
       {
-        find: /^@steipete\/summarize-core$/,
+        find: /^@creativerezz\/summarize-core$/,
         replacement: resolve(rootDir, "packages/core/src/index.ts"),
       },
     ],

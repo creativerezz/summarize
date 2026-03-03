@@ -12,20 +12,20 @@ export async function resolveCliEntrypointCandidatesFromWindowsShim(
 
   const shimDir = path.dirname(shimPath);
   const candidates = [
-    path.resolve(shimDir, "node_modules", "@steipete", "summarize", "dist", "cli.cjs"),
-    path.resolve(shimDir, "node_modules", "@steipete", "summarize", "dist", "cli.js"),
-    path.resolve(shimDir, "..", "@steipete", "summarize", "dist", "cli.cjs"),
-    path.resolve(shimDir, "..", "@steipete", "summarize", "dist", "cli.js"),
+    path.resolve(shimDir, "node_modules", "@creativerezz", "summarize", "dist", "cli.cjs"),
+    path.resolve(shimDir, "node_modules", "@creativerezz", "summarize", "dist", "cli.js"),
+    path.resolve(shimDir, "..", "@creativerezz", "summarize", "dist", "cli.cjs"),
+    path.resolve(shimDir, "..", "@creativerezz", "summarize", "dist", "cli.js"),
   ];
 
   try {
     const contents = await fs.readFile(shimPath, "utf8");
     const tokenMatch = contents.match(
-      /(?:%~dp0|%dp0%|\$basedir)[^"'\\r\\n]*node_modules[\\/]+@steipete[\\/]+summarize[\\/]+dist[\\/]+cli\.(?:cjs|js)/i,
+      /(?:%~dp0|%dp0%|\$basedir)[^"'\\r\\n]*node_modules[\\/]+@creativerezz[\\/]+summarize[\\/]+dist[\\/]+cli\.(?:cjs|js)/i,
     );
     const matches = Array.from(
       contents.matchAll(
-        /["']?([^"'\\r\\n]*node_modules[\\/]+@steipete[\\/]+summarize[\\/]+dist[\\/]+cli\.(?:cjs|js))["']?/gi,
+        /["']?([^"'\\r\\n]*node_modules[\\/]+@creativerezz[\\/]+summarize[\\/]+dist[\\/]+cli\.(?:cjs|js))["']?/gi,
       ),
     );
     const preferred =

@@ -527,7 +527,68 @@ header {
 
 .controls {
   display: flex;
+  align-items: center;
   gap: 8px;
+}
+
+.quickPatternRoot {
+  display: flex;
+  grid-column: 1 / -1;
+}
+
+.quickPatternChips {
+  display: flex;
+  gap: 4px;
+  flex-wrap: wrap;
+  width: 100%;
+}
+
+.quickPatternChip {
+  font-size: 11px;
+  padding: 4px 8px;
+  border-radius: 8px;
+  white-space: nowrap;
+}
+
+.quickPatternChip.active {
+  background: var(--accent, #0071e3);
+  color: #fff;
+}
+
+.quickPatternChip[data-busy="true"] {
+  pointer-events: none;
+  opacity: 0.6;
+}
+
+.headerPatternRoot {
+  display: flex;
+}
+
+.headerPatternSelect {
+  appearance: none;
+  -webkit-appearance: none;
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: var(--radius, 8px);
+  color: var(--muted);
+  font: inherit;
+  font-size: 12px;
+  padding: 6px 24px 6px 10px;
+  cursor: pointer;
+  min-height: 32px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M1 1l4 4 4-4' fill='none' stroke='%23999' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 8px center;
+}
+
+.headerPatternSelect:hover {
+  border-color: color-mix(in srgb, var(--ui-focus) 35%, var(--border));
+  color: var(--text);
+}
+
+.headerPatternSelect:focus-visible {
+  outline: 2px solid var(--ui-focus);
+  outline-offset: 1px;
 }
 
 .summarizeControlRoot {
@@ -678,6 +739,11 @@ button.icon.isActive {
 
 button.icon.isActive svg {
   transform: rotate(22deg);
+}
+
+#copyBtn:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
 }
 
 button.ghost {
@@ -1066,11 +1132,19 @@ details.drawerAdvanced:not([open]) > .drawerAdvancedBody {
   gap: 8px;
 }
 
-#lengthRoot {
+#lengthRoot,
+#patternRoot {
   min-width: 0;
 }
 
-label.length.mini {
+label.pattern.mini .patternSelect {
+  min-height: var(--drawer-control-height);
+  width: 100%;
+  min-width: 92px;
+}
+
+label.length.mini,
+label.pattern.mini {
   display: grid;
   gap: 6px;
   color: var(--muted);

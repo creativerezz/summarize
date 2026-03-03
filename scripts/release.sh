@@ -56,8 +56,8 @@ phase_verify_pack() {
   local version tmp_dir tarball core_tarball install_dir
   version="$(node -p 'require("./package.json").version')"
   tmp_dir="$(mktemp -d)"
-  core_tarball="${tmp_dir}/steipete-summarize-core-${version}.tgz"
-  tarball="${tmp_dir}/steipete-summarize-${version}.tgz"
+  core_tarball="${tmp_dir}/creativerezz-summarize-core-${version}.tgz"
+  tarball="${tmp_dir}/creativerezz-summarize-${version}.tgz"
   run pnpm -C packages/core pack --pack-destination "${tmp_dir}"
   run pnpm pack --pack-destination "${tmp_dir}"
   if [ ! -f "${core_tarball}" ]; then
@@ -71,7 +71,7 @@ phase_verify_pack() {
   install_dir="${tmp_dir}/install"
   run mkdir -p "${install_dir}"
   run npm install --prefix "${install_dir}" "${core_tarball}" "${tarball}"
-  run node "${install_dir}/node_modules/@steipete/summarize/dist/cli.js" --help >/dev/null
+  run node "${install_dir}/node_modules/@creativerezz/summarize/dist/cli.js" --help >/dev/null
   echo "ok"
 }
 
@@ -123,11 +123,11 @@ phase_publish() {
 
 phase_smoke() {
   banner "Smoke"
-  run npm view @steipete/summarize version
-  run npm view @steipete/summarize-core version
+  run npm view @creativerezz/summarize version
+  run npm view @creativerezz/summarize-core version
   local version
   version="$(node -p 'require("./package.json").version')"
-  run bash -c "pnpm -s dlx @steipete/summarize@${version} --help >/dev/null"
+  run bash -c "pnpm -s dlx @creativerezz/summarize@${version} --help >/dev/null"
   echo "ok"
 }
 
@@ -155,7 +155,7 @@ phase_tap() {
     echo "Tap repo is dirty: ${tap_dir}"
     exit 1
   fi
-  url="https://github.com/steipete/summarize/releases/download/v${version}/summarize-macos-arm64-v${version}.tar.gz"
+  url="https://github.com/creativerezz/summarize/releases/download/v${version}/summarize-macos-arm64-v${version}.tar.gz"
   tmp_dir="$(mktemp -d)"
   tarball="${tmp_dir}/summarize-macos-arm64-v${version}.tar.gz"
   run curl -fsSL "${url}" -o "${tarball}"
@@ -202,7 +202,7 @@ case "$PHASE" in
     echo "  build     pnpm build"
     echo "  verify    pack + install tarball + --help"
     echo "  publish   pnpm publish --tag latest --access public"
-    echo "  smoke     npm view + pnpm dlx @steipete/summarize --help"
+    echo "  smoke     npm view + pnpm dlx @creativerezz/summarize --help"
     echo "  tag       git tag vX.Y.Z + push tags"
     echo "  tap       update homebrew-tap formula + sha"
     echo "  chrome    build + zip Chrome extension"
