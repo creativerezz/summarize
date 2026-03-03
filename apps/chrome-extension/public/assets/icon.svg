@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128">
+  <!-- Summarize: document with lines - thick lines for 16px clarity -->
+  <rect x="36" y="24" width="56" height="80" rx="6" fill="#1a1a1a"/>
+  <rect x="48" y="42" width="32" height="8" rx="2" fill="#fff"/>
+  <rect x="48" y="56" width="28" height="8" rx="2" fill="#fff"/>
+  <rect x="48" y="70" width="30" height="8" rx="2" fill="#fff"/>
+</svg>

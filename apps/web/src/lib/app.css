@@ -1,4 +1,52 @@
 @import "tailwindcss";
 @plugin 'daisyui' {
-  themes: all;
+  themes: fantasy --default;
 }
+
+/* daisyui themes *
+This is the full list of daisyui themes.
+We can use any of these themes by importing the corresponding file.
+For example, to use the "sunset" theme, we can import the "daisyui/themes/sunset" file.
+To use the "light" theme, we can import the "daisyui/themes/light" file.
+To use the "dark" theme, we can import the "daisyui/themes/dark" file.
+And so on.
+We can also use the "daisyui/themes/light" file to use the "light" theme.
+We can also use the "daisyui/themes/dark" file to use the "dark" theme.
+And so on.
+
+@import "daisyui/themes/light";
+@import "daisyui/themes/dark";
+@import "daisyui/themes/cupcake";
+@import "daisyui/themes/bumblebee";
+@import "daisyui/themes/emerald";
+@import "daisyui/themes/corporate";
+@import "daisyui/themes/synthwave";
+@import "daisyui/themes/retro";
+@import "daisyui/themes/cyberpunk";
+@import "daisyui/themes/valentine";
+@import "daisyui/themes/halloween";
+@import "daisyui/themes/garden";
+@import "daisyui/themes/forest";
+@import "daisyui/themes/aqua";
+@import "daisyui/themes/lofi";
+@import "daisyui/themes/pastel";
+@import "daisyui/themes/fantasy";
+@import "daisyui/themes/wireframe";
+@import "daisyui/themes/black";
+@import "daisyui/themes/luxury";
+@import "daisyui/themes/dracula";
+@import "daisyui/themes/cmyk";
+@import "daisyui/themes/autumn";
+@import "daisyui/themes/business";
+@import "daisyui/themes/acid";
+@import "daisyui/themes/lemonade";
+@import "daisyui/themes/night";
+@import "daisyui/themes/coffee";
+@import "daisyui/themes/winter";
+@import "daisyui/themes/dim";
+@import "daisyui/themes/nord";
+@import "daisyui/themes/sunset";
+@import "daisyui/themes/caramellatte";
+@import "daisyui/themes/abyss";
+@import "daisyui/themes/silk";
+/* daisyui themes */
